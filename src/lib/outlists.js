@@ -1,4 +1,4 @@
-// Split data into two non-overlapping lists: "Down now" (NRC status) and "Upcoming" (published, not yet started).
+// Split data into two non-overlapping lists: "Offline" (NRC status) and "Upcoming" (published, not yet started).
 export function downNow(status, plants, upcoming = { outages: [] }) {
   if (!status) return [];
   const out = [];

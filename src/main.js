@@ -1,3 +1,4 @@
+import { ico } from './icons.js';
 import './style.css';
 import plants from './data/plants.json';
 import perdiem from './data/perdiem.json';
@@ -28,23 +29,23 @@ const app = document.getElementById('app');
 app.innerHTML = `
   <header class="bar">
     <button class="icon-btn" id="back" aria-label="Back" hidden>‹</button>
-    <h1 id="title">Outage Travel</h1>
-    <button class="icon-btn" id="theme" aria-label="Toggle theme">◐</button>
+    <div class="brand" aria-hidden="true"><span class="mark"></span></div><h1 id="title">Outage Travel</h1>
+    <button class="icon-btn" id="theme" aria-label="Toggle theme">${ico("theme")}</button>
   </header>
   <main id="view" tabindex="-1"></main>
   <nav class="tabbar">
-    <a href="#/" data-nav="home"><span>⌂</span>My outages</a>
-    <a href="#/down" data-nav="down"><span>🔴</span>Down now</a>
-    <a href="#/upcoming" data-nav="upcoming"><span>📅</span>Upcoming</a>
-    <a href="#/plants" data-nav="plants"><span>⚛</span>Plants</a>
-    <a href="#/about" data-nav="about"><span>ⓘ</span>About</a>
+    <a href="#/" data-nav="home"><span>${ico("home")}</span>My outages</a>
+    <a href="#/down" data-nav="down"><span>${ico("offline")}</span>Offline</a>
+    <a href="#/upcoming" data-nav="upcoming"><span>${ico("calendar")}</span>Upcoming</a>
+    <a href="#/plants" data-nav="plants"><span>${ico("plant")}</span>Plants</a>
+    <a href="#/about" data-nav="about"><span>${ico("info")}</span>About</a>
   </nav>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>`;
 document.body.classList.add('no-ad');
 const view = document.getElementById('view');
 const $ = (id) => document.getElementById(id);
 
-const applyTheme = (t) => { document.documentElement.dataset.theme = t; document.querySelector('meta[name=theme-color]').setAttribute('content', t === 'light' ? '#ffffff' : '#111418'); };
+const applyTheme = (t) => { document.documentElement.dataset.theme = t; document.querySelector('meta[name=theme-color]').setAttribute('content', t === 'light' ? '#ffffff' : '#0b1220'); };
 applyTheme(get('ot.theme', 'dark'));
 $('theme').onclick = () => { const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; set('ot.theme', t); applyTheme(t); };
 let tt; function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 1900); }
@@ -92,14 +93,14 @@ function home() {
       return `<a class="ocard" href="#/o/${o.id}"><div class="ohead"><b>${esc(p.name)}</b>${down ? `<span class="pill bad">${down} unit${down > 1 ? 's' : ''} offline</span>` : ''}</div>
         <div class="osub">${esc(p.city)}, ${p.state} · ${o.start ? fmtDate(o.start) : 'dates TBD'}${o.end ? ' – ' + fmtDate(o.end) : ''}</div>
         ${o.company ? `<div class="osub">${esc(o.company)}</div>` : ''}<span class="chev">›</span></a>`; }).join('')}</div>`
-      : `<div class="card empty"><div class="big">⚛</div><h2>Where’s your next outage?</h2><p class="hint">Add it once — housing, per diem & pay, and the crew board all open from it.</p></div>`}
-    <a class="btn primary" href="#/add">＋ Add an outage</a>
-    <a class="ocard mt" href="#/forum" id="home-forum"><div class="ohead"><b>💬 Forum</b>${forum.enabled ? '' : '<span class="pill">Coming soon</span>'}</div><div class="osub">Plant boards + overall: housing, food, rides, work & pay</div><span class="chev">›</span></a>
-    <div class="card mt"><h3>🔴 Down now <small>${offline.length} offline</small></h3>
+      : `<div class="card empty"><div class="big">${ico("plant","ico xl")}</div><h2>Where’s your next outage?</h2><p class="hint">Add it once — housing, per diem & pay, and the crew board all open from it.</p></div>`}
+    <a class="btn primary" href="#/add">${ico("plus")} Add an outage</a>
+    <a class="ocard mt" href="#/forum" id="home-forum"><div class="ohead"><b class="ih">${ico("forum")} Forum</b>${forum.enabled ? '' : '<span class="pill">Coming soon</span>'}</div><div class="osub">Plant boards + overall: housing, food, rides, work & pay</div><span class="chev">›</span></a>
+    <div class="card mt"><h3><span class="ih"><i class="sdot bad"></i>Offline</span> <small>${offline.length} units</small></h3>
       ${offline.length ? offline.map(({ p, u }) => `<a class="row-link" href="#/plant/${p.id}">${unitRow(u)}</a>`).join('') : '<p class="hint">None offline in the latest report.</p>'}
       ${statusLine()}
       <p class="hint">0% power = shut down. That includes refueling outages, maintenance and other shutdowns. The report doesn’t say which.</p>
-      <a class="btn-link mt" href="#/down">See all in Down now ›</a> · <a class="btn-link mt" href="#/upcoming">📅 Upcoming outages ›</a>
+      <a class="btn-link mt" href="#/down">See all offline ›</a> · <a class="btn-link mt" href="#/upcoming">Upcoming outages ›</a>
     </div>`;
 }
 
@@ -168,12 +169,12 @@ function hub(o) {
       ${status ? `<p class="hint">NRC report ${fmtDate(status.reportDate)}</p>` : ''}
     </div>
     <div class="grid">
-      <a class="tile big" href="#/o/${o.id}/housing"><span class="t-ico">🛏️</span><b>Find a room</b><small>Airbnb, Furnished Finder, hotels, RV parks</small></a>
-      <a class="tile big" href="#/o/${o.id}/pay"><span class="t-ico">💵</span><b>Pay & per diem</b><small>GSA FY${r.fy}: ${money(r.lodging)} + ${money(r.mie)}/day</small></a>
-      <a class="tile big" href="#/o/${o.id}/board"><span class="t-ico">🤝</span><b>Crew board</b><small>${n ? `${n} open post${n > 1 ? 's' : ''}` : 'Rooms & rides'}</small></a>
-      <a class="tile big" href="#/plant/${p.id}"><span class="t-ico">⚛</span><b>Plant info</b><small>Units, owner, status history</small></a>
-      <a class="tile big" href="#/forum/${p.id}"><span class="t-ico">💬</span><b>Forum</b><small>${forum.enabled ? 'Talk with other travelers' : 'Coming soon'}</small></a>
-      <a class="tile big" href="#/o/${o.id}/local"><span class="t-ico">🍽️</span><b>Food & local</b><small>${(() => { const k = notes.all().filter((x) => x.outageId === o.id).length; return k ? `${k} saved spot${k > 1 ? 's' : ''} · ` : ''; })()}Diners, 24-hr food, laundry, gyms, boots</small></a>
+      <a class="tile big" href="#/o/${o.id}/housing"><span class="t-ico">${ico("bed")}</span><b>Find a room</b><small>Airbnb, Furnished Finder, hotels, RV parks</small></a>
+      <a class="tile big" href="#/o/${o.id}/pay"><span class="t-ico">${ico("pay")}</span><b>Pay & per diem</b><small>GSA FY${r.fy}: ${money(r.lodging)} + ${money(r.mie)}/day</small></a>
+      <a class="tile big" href="#/o/${o.id}/board"><span class="t-ico">${ico("crew")}</span><b>Crew board</b><small>${n ? `${n} open post${n > 1 ? 's' : ''}` : 'Rooms & rides'}</small></a>
+      <a class="tile big" href="#/plant/${p.id}"><span class="t-ico">${ico("plant")}</span><b>Plant info</b><small>Units, owner, status history</small></a>
+      <a class="tile big" href="#/forum/${p.id}"><span class="t-ico">${ico("forum")}</span><b>Forum</b><small>${forum.enabled ? 'Talk with other travelers' : 'Coming soon'}</small></a>
+      <a class="tile big" href="#/o/${o.id}/local"><span class="t-ico">${ico("food")}</span><b>Food & local</b><small>${(() => { const k = notes.all().filter((x) => x.outageId === o.id).length; return k ? `${k} saved spot${k > 1 ? 's' : ''} · ` : ''; })()}Diners, 24-hr food, laundry, gyms, boots</small></a>
     </div>
     ${ratingSummary(p, true)}
     ${o.notes ? `<div class="card"><h3>Notes</h3><p class="pre">${esc(o.notes)}</p></div>` : ''}
@@ -434,16 +435,16 @@ function importRating(code) {
   if ($('imp')) $('imp').onclick = () => { ratings.save(mergeRating(ratings.all(), r)); toast('Rating added'); location.replace(`#/plant/${p.id}`); };
 }
 function upcomingView() {
-  chrome('📅 Upcoming outages', { nav: 'upcoming' });
+  chrome('Upcoming outages', { nav: 'upcoming' });
   const l = upcomingOnly(upcoming, today());
-  view.innerHTML = `<div class="spot">Outages that haven’t started yet, from published schedules, soonest first. Units already down are in 🔴 Down now.</div>
+  view.innerHTML = `<div class="spot">Outages that haven’t started yet, from published schedules, soonest first. Units already shut down are under Offline.</div>
     ${l.length ? l.map((u) => { const p = plantById[u.plant]; return `<a class="ocard up" href="#/plant/${u.plant}"><div class="ohead"><b>${esc(u.unit)} · ${esc(u.label)}</b><span class="pill">Starts ${fmtDate(u.start)}</span></div>
       <div class="osub">${fmtDate(u.start)}${u.end ? ' – ' + fmtDate(u.end) : ' (start)'} · ${esc(p.name)}, ${esc(p.city)}, ${p.state}</div>
       <div class="osub">Source: ${esc(upcoming.sources[u.src].name.split(' — ')[0])}</div><span class="chev">›</span></a>`; }).join('') : '<div class="card"><p class="hint">No published upcoming outages right now.</p></div>'}
     <p class="fine">Checked ${fmtDate(upcoming.retrieved)}. Dates can change; this isn’t every plant’s schedule. Sources: ${Object.values(upcoming.sources).map((x) => `<a href="${x.url}" target="_blank" rel="noopener">${esc(x.name.split(' — ')[0])}</a>`).join(', ')}.</p>`;
 }
 function downView() {
-  chrome('🔴 Down now', { nav: 'down' });
+  chrome('Offline', { nav: 'down' });
   const l = downNow(status, plants, upcoming);
   const off = l.filter((x) => x.power === 0), red = l.filter((x) => x.power > 0);
   const card = (x) => `<a class="ocard" href="#/plant/${x.plant.id}"><div class="ohead"><b>${esc(x.unit)}</b><span class="pill ${x.power === 0 ? 'bad' : 'warn'}">${x.power === 0 ? 'Offline' : x.power + '% power'}</span></div>

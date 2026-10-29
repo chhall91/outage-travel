@@ -1,0 +1,22 @@
+// 390x844 visual check of the "operations" theme: home, Offline, Upcoming, outage hub, pay.
+import { chromium } from 'playwright-core';
+const URL = process.env.URL || 'https://chhall91.github.io/outage-travel/';
+const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+const p = await ctx.newPage(); const errors = [];
+p.on('pageerror', (e) => errors.push(e.message));
+p.on('console', (m) => { if (m.type() === 'error' && !/nrc\.gov|CORS|Failed to load resource|ERR_FAILED/.test(m.text())) errors.push(m.text()); });
+const shot = async (n) => { await p.waitForTimeout(1500); await p.screenshot({ path: `screenshots/${n}.png` }); console.log('screenshots/' + n + '.png'); };
+await p.goto(URL); await p.evaluate(() => localStorage.clear()); await p.goto(URL + '#/'); await p.waitForTimeout(2500);
+await p.tap('a[href="#/add"]'); await p.fill('#pq', 'nine mile'); await p.waitForTimeout(400); await p.tap('.pitem');
+if (await p.$('.use')) await p.tap('.use');
+await p.fill('#company', 'Example Contractor'); await p.tap('button[type=submit]'); await p.waitForTimeout(500);
+const hub = p.url(); await shot('30-hub-pro');
+await p.goto(URL + '#/'); await shot('31-home-pro');
+await p.tap('a[data-nav="down"]'); await shot('32-offline-pro');
+console.log('tab:', await p.textContent('a[data-nav="down"]'), '| title:', await p.textContent('#title'));
+await p.tap('a[data-nav="upcoming"]'); await shot('33-upcoming-pro');
+console.log('explainer:', await p.textContent('.spot'));
+await p.goto(hub); await p.tap('a[href$="/pay"]'); await p.fill('#rate', '38.50'); await shot('34-pay-pro');
+const body = await p.evaluate(() => document.body.innerText); console.log('Down now present:', /down now/i.test(body));
+console.log('errors:', errors.length ? errors : 'none'); await b.close();
