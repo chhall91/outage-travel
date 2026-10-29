@@ -1,0 +1,15 @@
+import { chromium } from 'playwright-core';
+const URL='https://chhall91.github.io/outage-travel/';
+const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
+const p=await (await b.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true})).newPage();
+const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error'&&!/nrc\.gov|CORS|Failed to load resource|ERR_FAILED/.test(m.text()))errs.push(m.text())});
+await p.goto(URL+'?v='+Date.now()+'#/');await p.waitForTimeout(3000);
+console.log('nav:',await p.$$eval('.tabbar a',a=>a.map(x=>x.textContent.trim())));
+await p.tap('a[data-nav=down]');await p.waitForTimeout(2500);await p.screenshot({path:'screenshots/26-down-now.png'});
+console.log('down cards',await p.$$eval('.ocard',x=>x.length), (await p.textContent('#view')).slice(0,200));
+await p.tap('a[data-nav=upcoming]');await p.waitForTimeout(1500);await p.screenshot({path:'screenshots/27-upcoming.png'});
+console.log('up cards',await p.$$eval('.ocard',x=>x.map(c=>c.querySelector('b').textContent+' '+c.querySelector('.pill').textContent)));
+await p.tap('.ocard');await p.waitForTimeout(1500);console.log(p.url(), await p.$$eval('a.btn.primary',a=>a.map(x=>x.textContent)));
+await p.screenshot({path:'screenshots/28-plant-from-upcoming.png',fullPage:true});
+await p.goto(URL+'#/');await p.waitForTimeout(1500);await p.screenshot({path:'screenshots/29-home-sections.png',fullPage:true});
+console.log('errors',errs);await b.close();
