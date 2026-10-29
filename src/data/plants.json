@@ -1,0 +1,1088 @@
+[
+{
+"id": "ano",
+"name": "Arkansas Nuclear One",
+"units": [
+"Arkansas Nuclear 1",
+"Arkansas Nuclear 2"
+],
+"type": "PWR",
+"nrcLocation": "6 miles WNW of Russellville, AR",
+"owner": "Entergy Nuclear Operations, Inc.",
+"region": 4,
+"lat": 35.311,
+"lon": -93.2351,
+"city": "Russellville",
+"county": "Pope",
+"state": "AR",
+"eiaName": "Arkansas Nuclear One",
+"eiaCode": 8055,
+"mw": 1821
+},
+{
+"id": "beaver-valley",
+"name": "Beaver Valley",
+"units": [
+"Beaver Valley 1",
+"Beaver Valley 2"
+],
+"type": "PWR",
+"nrcLocation": "17 miles W of McCandless, PA",
+"owner": "Vistra Corporation",
+"region": 1,
+"lat": 40.6219,
+"lon": -80.4336,
+"city": "Shippingport",
+"county": "Beaver",
+"state": "PA",
+"eiaName": "Beaver Valley",
+"eiaCode": 6040,
+"mw": 1808
+},
+{
+"id": "braidwood",
+"name": "Braidwood",
+"units": [
+"Braidwood 1",
+"Braidwood 2"
+],
+"type": "PWR",
+"nrcLocation": "20 miles SSW of Joliet, IL",
+"owner": "Constellation Energy Generation, LLC",
+"region": 3,
+"lat": 41.2435,
+"lon": -88.2286,
+"city": "Braceville",
+"county": "Will",
+"state": "IL",
+"eiaName": "Braidwood Generation Station",
+"eiaCode": 6022,
+"mw": 2332.3
+},
+{
+"id": "browns-ferry",
+"name": "Browns Ferry",
+"units": [
+"Browns Ferry 1",
+"Browns Ferry 2",
+"Browns Ferry 3"
+],
+"type": "BWR",
+"nrcLocation": "32 miles W of Huntsville, AL",
+"owner": "Tennessee Valley Authority",
+"region": 2,
+"lat": 34.7042,
+"lon": -87.1189,
+"city": "Decatur",
+"county": "Limestone",
+"state": "AL",
+"eiaName": "Browns Ferry",
+"eiaCode": 46,
+"mw": 3661.7
+},
+{
+"id": "brunswick",
+"name": "Brunswick",
+"units": [
+"Brunswick 1",
+"Brunswick 2"
+],
+"type": "BWR",
+"nrcLocation": "30 miles S of Wilmington, NC",
+"owner": "Duke Energy Progress, LLC",
+"region": 2,
+"lat": 33.9597,
+"lon": -78.0114,
+"city": "Southport",
+"county": "Brunswick",
+"state": "NC",
+"eiaName": "Brunswick Nuclear",
+"eiaCode": 6014,
+"mw": 1870
+},
+{
+"id": "byron",
+"name": "Byron",
+"units": [
+"Byron 1",
+"Byron 2"
+],
+"type": "PWR",
+"nrcLocation": "17 miles SW of Rockford, IL",
+"owner": "Constellation Energy Generation, LLC",
+"region": 3,
+"lat": 42.0742,
+"lon": -89.2819,
+"city": "Byron",
+"county": "Ogle",
+"state": "IL",
+"eiaName": "Byron Generating Station",
+"eiaCode": 6023,
+"mw": 2300
+},
+{
+"id": "callaway",
+"name": "Callaway",
+"units": [
+"Callaway"
+],
+"type": "PWR",
+"nrcLocation": "25 miles ENE of Jefferson City, MO",
+"owner": "Ameren UE",
+"region": 4,
+"lat": 38.758919,
+"lon": -91.778841,
+"city": "Fulton",
+"county": "Callaway",
+"state": "MO",
+"eiaName": "Callaway",
+"eiaCode": 6153,
+"mw": 1190
+},
+{
+"id": "calvert-cliffs",
+"name": "Calvert Cliffs",
+"units": [
+"Calvert Cliffs 1",
+"Calvert Cliffs 2"
+],
+"type": "PWR",
+"nrcLocation": "40 miles S of Annapolis, MD",
+"owner": "Constellation Energy Generation, LLC",
+"region": 1,
+"lat": 38.4344,
+"lon": -76.4417,
+"city": "Lusby",
+"county": "Calvert",
+"state": "MD",
+"eiaName": "Calvert Cliffs Nuclear Power Plant",
+"eiaCode": 6011,
+"mw": 1745.2
+},
+{
+"id": "catawba",
+"name": "Catawba",
+"units": [
+"Catawba 1",
+"Catawba 2"
+],
+"type": "PWR",
+"nrcLocation": "18 miles S of Charlotte, NC",
+"owner": "Duke Energy Carolinas, LLC",
+"region": 2,
+"lat": 35.0514,
+"lon": -81.0694,
+"city": "York",
+"county": "York",
+"state": "SC",
+"eiaName": "Catawba",
+"eiaCode": 6036,
+"mw": 2310.1
+},
+{
+"id": "clinton",
+"name": "Clinton",
+"units": [
+"Clinton"
+],
+"type": "BWR",
+"nrcLocation": "23 miles SSE of Bloomington, IL",
+"owner": "Constellation Energy Generation, LLC",
+"region": 3,
+"lat": 40.1719,
+"lon": -88.8339,
+"city": "Clinton",
+"county": "DeWitt",
+"state": "IL",
+"eiaName": "Clinton Power Station",
+"eiaCode": 204,
+"mw": 1078.9
+},
+{
+"id": "columbia",
+"name": "Columbia Generating Station",
+"units": [
+"Columbia Generating Station"
+],
+"type": "BWR",
+"nrcLocation": "20 miles NNE of Pasco, WA",
+"owner": "Energy Northwest",
+"region": 4,
+"lat": 46.4711,
+"lon": -119.3339,
+"city": "Richland",
+"county": "Benton",
+"state": "WA",
+"eiaName": "Columbia Generating Station",
+"eiaCode": 371,
+"mw": 1151
+},
+{
+"id": "comanche-peak",
+"name": "Comanche Peak",
+"units": [
+"Comanche Peak 1",
+"Comanche Peak 2"
+],
+"type": "PWR",
+"nrcLocation": "40 miles SW of Fort Worth, TX",
+"owner": "Vistra Operations Company, LLC",
+"region": 4,
+"lat": 32.298365,
+"lon": -97.785515,
+"city": "Glen Rose",
+"county": "Somervell",
+"state": "TX",
+"eiaName": "Comanche Peak",
+"eiaCode": 6145,
+"mw": 2400
+},
+{
+"id": "cooper",
+"name": "Cooper",
+"units": [
+"Cooper"
+],
+"type": "BWR",
+"nrcLocation": "23 miles S of Nebraska City, NE",
+"owner": "Nebraska Public Power District",
+"region": 4,
+"lat": 40.3628,
+"lon": -95.6408,
+"city": "Brownville",
+"county": "Nemaha",
+"state": "NE",
+"eiaName": "Cooper Nuclear Station",
+"eiaCode": 8036,
+"mw": 768.5
+},
+{
+"id": "dc-cook",
+"name": "D.C. Cook",
+"units": [
+"D.C. Cook 1",
+"D.C. Cook 2"
+],
+"type": "PWR",
+"nrcLocation": "13 miles S of Benton Harbor, MI",
+"owner": "Indiana/Michigan Power Co.",
+"region": 3,
+"lat": 41.975604,
+"lon": -86.565206,
+"city": "Bridgman",
+"county": "Berrien",
+"state": "MI",
+"eiaName": "Donald C Cook",
+"eiaCode": 6000,
+"mw": 2177
+},
+{
+"id": "davis-besse",
+"name": "Davis-Besse",
+"units": [
+"Davis-Besse"
+],
+"type": "PWR",
+"nrcLocation": "21 miles ESE of Toledo, OH",
+"owner": "Energy Harbor Nuclear Corp.",
+"region": 3,
+"lat": 41.5967,
+"lon": -83.0861,
+"city": "Oak Harbor",
+"county": "Ottawa",
+"state": "OH",
+"eiaName": "Davis Besse",
+"eiaCode": 6149,
+"mw": 894
+},
+{
+"id": "diablo-canyon",
+"name": "Diablo Canyon",
+"units": [
+"Diablo Canyon 1",
+"Diablo Canyon 2"
+],
+"type": "PWR",
+"nrcLocation": "12 miles WSW of San Luis Obispo, CA",
+"owner": "Pacific Gas & Electric Co.",
+"region": 4,
+"lat": 35.211536,
+"lon": -120.855542,
+"city": "Avila Beach",
+"county": "San Luis Obispo",
+"state": "CA",
+"eiaName": "Diablo Canyon",
+"eiaCode": 6099,
+"mw": 2240
+},
+{
+"id": "dresden",
+"name": "Dresden",
+"units": [
+"Dresden 2",
+"Dresden 3"
+],
+"type": "BWR",
+"nrcLocation": "25 miles SW of Joliet, IL",
+"owner": "Constellation Energy Generation, LLC",
+"region": 3,
+"lat": 41.39,
+"lon": -88.27,
+"city": "Morris",
+"county": "Grundy",
+"state": "IL",
+"eiaName": "Dresden Generating Station",
+"eiaCode": 869,
+"mw": 1797
+},
+{
+"id": "farley",
+"name": "Farley",
+"units": [
+"Farley 1",
+"Farley 2"
+],
+"type": "PWR",
+"nrcLocation": "18 miles E of Dothan, AL",
+"owner": "Southern Nuclear Operating Co.",
+"region": 2,
+"lat": 31.2231,
+"lon": -85.1116,
+"city": "Columbia",
+"county": "Houston",
+"state": "AL",
+"eiaName": "Joseph M Farley",
+"eiaCode": 6001,
+"mw": 1791
+},
+{
+"id": "fermi",
+"name": "Fermi 2",
+"units": [
+"Fermi 2"
+],
+"type": "BWR",
+"nrcLocation": "25 miles NE of Toledo, OH",
+"owner": "DTE Electric Company",
+"region": 3,
+"lat": 41.9631,
+"lon": -83.2581,
+"city": "Frenchtown Twp",
+"county": "Monroe",
+"state": "MI",
+"eiaName": "Fermi",
+"eiaCode": 1729,
+"mw": 1192
+},
+{
+"id": "fitzpatrick",
+"name": "FitzPatrick",
+"units": [
+"FitzPatrick"
+],
+"type": "BWR",
+"nrcLocation": "6 miles NE of Oswego, NY",
+"owner": "Constellation Energy Generation, LLC",
+"region": 1,
+"lat": 43.52139,
+"lon": -76.408394,
+"city": "Lycoming",
+"county": "Oswego",
+"state": "NY",
+"eiaName": "James A Fitzpatrick",
+"eiaCode": 6110,
+"mw": 852.8
+},
+{
+"id": "ginna",
+"name": "Ginna",
+"units": [
+"Ginna"
+],
+"type": "PWR",
+"nrcLocation": "20 miles NE of Rochester, NY",
+"owner": "Constellation Energy Generation, LLC",
+"region": 1,
+"lat": 43.2777,
+"lon": -77.3099,
+"city": "Ontario",
+"county": "Wayne",
+"state": "NY",
+"eiaName": "R E Ginna Nuclear Power Plant",
+"eiaCode": 6122,
+"mw": 581.5
+},
+{
+"id": "grand-gulf",
+"name": "Grand Gulf",
+"units": [
+"Grand Gulf 1"
+],
+"type": "BWR",
+"nrcLocation": "20 miles S of Vicksburg, MS",
+"owner": "Entergy Nuclear Operations, Inc.",
+"region": 4,
+"lat": 32.0081,
+"lon": -91.0478,
+"city": "Port Gibson",
+"county": "Claiborne",
+"state": "MS",
+"eiaName": "Grand Gulf",
+"eiaCode": 6072,
+"mw": 1390.3
+},
+{
+"id": "hatch",
+"name": "Hatch",
+"units": [
+"Hatch 1",
+"Hatch 2"
+],
+"type": "BWR",
+"nrcLocation": "20 miles S of Vidalia, GA",
+"owner": "Southern Nuclear Operating Co., Inc.",
+"region": 2,
+"lat": 31.9342,
+"lon": -82.3447,
+"city": "Baxley",
+"county": "Appling",
+"state": "GA",
+"eiaName": "Edwin I Hatch",
+"eiaCode": 6051,
+"mw": 1759
+},
+{
+"id": "hope-creek",
+"name": "Hope Creek",
+"units": [
+"Hope Creek 1"
+],
+"type": "BWR",
+"nrcLocation": "18 miles SE of Wilmington, DE",
+"owner": "PSEG Nuclear, LLC",
+"region": 1,
+"lat": 39.4666,
+"lon": -75.5377,
+"city": "Hancocks Bridge",
+"county": "Salem",
+"state": "NJ",
+"eiaName": "PSEG Hope Creek Generating Station",
+"eiaCode": 6118,
+"mw": 1172
+},
+{
+"id": "lasalle",
+"name": "La Salle",
+"units": [
+"La Salle 1",
+"La Salle 2"
+],
+"type": "BWR",
+"nrcLocation": "11 miles SE of Ottawa, IL",
+"owner": "Constellation Energy Generation, LLC",
+"region": 3,
+"lat": 41.245498,
+"lon": -88.669066,
+"city": "Marseilles",
+"county": "LaSalle",
+"state": "IL",
+"eiaName": "LaSalle Generating Station",
+"eiaCode": 6026,
+"mw": 2264.4
+},
+{
+"id": "limerick",
+"name": "Limerick",
+"units": [
+"Limerick 1",
+"Limerick 2"
+],
+"type": "BWR",
+"nrcLocation": "21 miles NW of Philadelphia, PA",
+"owner": "Constellation Energy Generation, LLC",
+"region": 1,
+"lat": 40.224303,
+"lon": -75.58744,
+"city": "Sanatoga",
+"county": "Montgomery",
+"state": "PA",
+"eiaName": "Limerick",
+"eiaCode": 6105,
+"mw": 2241.8
+},
+{
+"id": "mcguire",
+"name": "McGuire",
+"units": [
+"McGuire 1",
+"McGuire 2"
+],
+"type": "PWR",
+"nrcLocation": "17 miles N of Charlotte, NC",
+"owner": "Duke Energy Carolinas, LLC",
+"region": 2,
+"lat": 35.4331,
+"lon": -80.9486,
+"city": "Huntersville",
+"county": "Mecklenburg",
+"state": "NC",
+"eiaName": "McGuire",
+"eiaCode": 6038,
+"mw": 2315.6
+},
+{
+"id": "millstone",
+"name": "Millstone",
+"units": [
+"Millstone 2",
+"Millstone 3"
+],
+"type": "PWR",
+"nrcLocation": "3.2 miles WSW of New London, CT",
+"owner": "Dominion Generation",
+"region": 1,
+"lat": 41.3107,
+"lon": -72.1677,
+"city": "Waterford",
+"county": "New London",
+"state": "CT",
+"eiaName": "Millstone",
+"eiaCode": 566,
+"mw": 2104.2
+},
+{
+"id": "monticello",
+"name": "Monticello",
+"units": [
+"Monticello"
+],
+"type": "BWR",
+"nrcLocation": "35 miles NW of Minneapolis, MN",
+"owner": "Northern States Power Company \u2013 Minnesota",
+"region": 3,
+"lat": 45.3338,
+"lon": -93.8493,
+"city": "Monticello",
+"county": "Wright",
+"state": "MN",
+"eiaName": "Monticello Nuclear Facility",
+"eiaCode": 1922,
+"mw": 617
+},
+{
+"id": "nine-mile-point",
+"name": "Nine Mile Point",
+"units": [
+"Nine Mile Point 1",
+"Nine Mile Point 2"
+],
+"type": "BWR",
+"nrcLocation": "6 miles NE of Oswego, NY",
+"owner": "Constellation Energy Generation, LLC",
+"region": 1,
+"lat": 43.5211,
+"lon": -76.41,
+"city": "Lycoming",
+"county": "Oswego",
+"state": "NY",
+"eiaName": "Nine Mile Point Nuclear Station",
+"eiaCode": 2589,
+"mw": 1896.1
+},
+{
+"id": "north-anna",
+"name": "North Anna",
+"units": [
+"North Anna 1",
+"North Anna 2"
+],
+"type": "PWR",
+"nrcLocation": "40 miles NW of Richmond, VA",
+"owner": "Dominion Generation",
+"region": 2,
+"lat": 38.06,
+"lon": -77.7897,
+"city": "Mineral",
+"county": "Louisa",
+"state": "VA",
+"eiaName": "North Anna",
+"eiaCode": 6168,
+"mw": 1893
+},
+{
+"id": "oconee",
+"name": "Oconee",
+"units": [
+"Oconee 1",
+"Oconee 2",
+"Oconee 3"
+],
+"type": "PWR",
+"nrcLocation": "30 miles W of Greenville, SC",
+"owner": "Duke Energy Carolinas, LLC",
+"region": 2,
+"lat": 34.7939,
+"lon": -82.8986,
+"city": "Seneca",
+"county": "Oconee",
+"state": "SC",
+"eiaName": "Oconee",
+"eiaCode": 3265,
+"mw": 2554
+},
+{
+"id": "palisades",
+"name": "Palisades",
+"units": [
+"Palisades"
+],
+"type": "PWR",
+"nrcLocation": "5 miles S of South Haven, MI",
+"owner": "Holtec Palisades, LLC",
+"region": 3,
+"lat": 42.3225,
+"lon": -86.3147,
+"city": "Covert",
+"county": "Van Buren",
+"state": "MI",
+"eiaName": null,
+"eiaCode": null,
+"mw": null,
+"coordNote": "Approximate site coordinates (not in EIA operating-nuclear layer)"
+},
+{
+"id": "palo-verde",
+"name": "Palo Verde",
+"units": [
+"Palo Verde 1",
+"Palo Verde 2",
+"Palo Verde 3"
+],
+"type": "PWR",
+"nrcLocation": "50 miles W of Phoenix, AZ",
+"owner": "Arizona Public Service Co.",
+"region": 4,
+"lat": 33.3881,
+"lon": -112.8617,
+"city": "Wintersburg",
+"county": "Maricopa",
+"state": "AZ",
+"eiaName": "Palo Verde",
+"eiaCode": 6008,
+"mw": 3937
+},
+{
+"id": "peach-bottom",
+"name": "Peach Bottom",
+"units": [
+"Peach Bottom 2",
+"Peach Bottom 3"
+],
+"type": "BWR",
+"nrcLocation": "17.9 miles S of Lancaster, PA",
+"owner": "Constellation Energy Generation, LLC",
+"region": 1,
+"lat": 39.758936,
+"lon": -76.268742,
+"city": "Delta",
+"county": "York",
+"state": "PA",
+"eiaName": "Peach Bottom",
+"eiaCode": 3166,
+"mw": 2549.4
+},
+{
+"id": "perry",
+"name": "Perry",
+"units": [
+"Perry 1"
+],
+"type": "BWR",
+"nrcLocation": "35 miles NE of Cleveland, OH",
+"owner": "FirstEnergy Nuclear Operating Co.",
+"region": 3,
+"lat": 41.8006,
+"lon": -81.1439,
+"city": "Perry",
+"county": "Lake",
+"state": "OH",
+"eiaName": "Perry",
+"eiaCode": 6020,
+"mw": 1240
+},
+{
+"id": "point-beach",
+"name": "Point Beach",
+"units": [
+"Point Beach 1",
+"Point Beach 2"
+],
+"type": "PWR",
+"nrcLocation": "13 miles NNW of Manitowoc, WI",
+"owner": "NextEra Energy Point Beach, LLC",
+"region": 3,
+"lat": 44.2806,
+"lon": -87.5369,
+"city": "Two Rivers",
+"county": "Manitowoc",
+"state": "WI",
+"eiaName": "Point Beach Nuclear Plant",
+"eiaCode": 4046,
+"mw": 1200.3
+},
+{
+"id": "prairie-island",
+"name": "Prairie Island",
+"units": [
+"Prairie Island 1",
+"Prairie Island 2"
+],
+"type": "PWR",
+"nrcLocation": "28 miles SE of Minneapolis, MN",
+"owner": "Northern States Power Company \u2013 Minnesota",
+"region": 3,
+"lat": 44.622,
+"lon": -92.6333,
+"city": "Welch",
+"county": "Goodhue",
+"state": "MN",
+"eiaName": "Prairie Island",
+"eiaCode": 1925,
+"mw": 1040
+},
+{
+"id": "quad-cities",
+"name": "Quad Cities",
+"units": [
+"Quad Cities 1",
+"Quad Cities 2"
+],
+"type": "BWR",
+"nrcLocation": "20 miles NE of Moline, IL",
+"owner": "Constellation Energy Generation, LLC",
+"region": 3,
+"lat": 41.726111,
+"lon": -90.310278,
+"city": "Cordova",
+"county": "Rock Island",
+"state": "IL",
+"eiaName": "Quad Cities Generating Station",
+"eiaCode": 880,
+"mw": 1819
+},
+{
+"id": "river-bend",
+"name": "River Bend",
+"units": [
+"River Bend 1"
+],
+"type": "BWR",
+"nrcLocation": "24 miles NNW of Baton Rouge, LA",
+"owner": "Entergy Nuclear Operations, Inc.",
+"region": 4,
+"lat": 30.757,
+"lon": -91.3327,
+"city": "St. Francisville",
+"county": "West Feliciana",
+"state": "LA",
+"eiaName": "River Bend",
+"eiaCode": 6462,
+"mw": 975.5
+},
+{
+"id": "robinson",
+"name": "Robinson",
+"units": [
+"Robinson 2"
+],
+"type": "PWR",
+"nrcLocation": "26 miles NW of Florence, SC",
+"owner": "Duke Energy Progress, LLC",
+"region": 2,
+"lat": 34.4017,
+"lon": -80.1589,
+"city": "Hartsville",
+"county": "Darlington",
+"state": "SC",
+"eiaName": "H B Robinson",
+"eiaCode": 3251,
+"mw": 759
+},
+{
+"id": "st-lucie",
+"name": "Saint Lucie",
+"units": [
+"Saint Lucie 1",
+"Saint Lucie 2"
+],
+"type": "PWR",
+"nrcLocation": "10 miles SE of Ft. Pierce, FL",
+"owner": "Florida Power & Light Co.",
+"region": 2,
+"lat": 27.348611,
+"lon": -80.246389,
+"city": "Jensen Beach",
+"county": "St Lucie",
+"state": "FL",
+"eiaName": "St Lucie",
+"eiaCode": 6045,
+"mw": 1968
+},
+{
+"id": "salem",
+"name": "Salem",
+"units": [
+"Salem 1",
+"Salem 2"
+],
+"type": "PWR",
+"nrcLocation": "18 miles S of Wilmington, DE",
+"owner": "PSEG Nuclear, LLC",
+"region": 1,
+"lat": 39.4625,
+"lon": -75.5358,
+"city": "Hancocks Bridge",
+"county": "Salem",
+"state": "NJ",
+"eiaName": "PSEG Salem Generating Station",
+"eiaCode": 2410,
+"mw": 2323.1
+},
+{
+"id": "seabrook",
+"name": "Seabrook",
+"units": [
+"Seabrook 1"
+],
+"type": "PWR",
+"nrcLocation": "13 miles S of Portsmouth, NH",
+"owner": "NextEra Energy Seabrook, LLC",
+"region": 1,
+"lat": 42.899167,
+"lon": -70.848889,
+"city": "Seabrook",
+"county": "Rockingham",
+"state": "NH",
+"eiaName": "Seabrook",
+"eiaCode": 6115,
+"mw": 1250
+},
+{
+"id": "sequoyah",
+"name": "Sequoyah",
+"units": [
+"Sequoyah 1",
+"Sequoyah 2"
+],
+"type": "PWR",
+"nrcLocation": "16 miles NE of Chattanooga, TN",
+"owner": "Tennessee Valley Authority",
+"region": 2,
+"lat": 35.2267,
+"lon": -85.0917,
+"city": "Soddy Daisy",
+"county": "Hamilton",
+"state": "TN",
+"eiaName": "Sequoyah",
+"eiaCode": 6152,
+"mw": 2277.7
+},
+{
+"id": "harris",
+"name": "Shearon Harris",
+"units": [
+"Shearon Harris 1"
+],
+"type": "PWR",
+"nrcLocation": "20 miles SW of Raleigh, NC",
+"owner": "Duke Energy Progress, LLC",
+"region": 2,
+"lat": 35.6334,
+"lon": -78.9556,
+"city": "New Hill",
+"county": "Wake",
+"state": "NC",
+"eiaName": "Harris",
+"eiaCode": 6015,
+"mw": 964
+},
+{
+"id": "south-texas",
+"name": "South Texas Project",
+"units": [
+"South Texas 1",
+"South Texas 2"
+],
+"type": "PWR",
+"nrcLocation": "90 miles SW of Houston, TX",
+"owner": "STP Nuclear Operating Co.",
+"region": 4,
+"lat": 28.795,
+"lon": -96.0481,
+"city": "Wadsworth",
+"county": "Matagorda",
+"state": "TX",
+"eiaName": "South Texas Project",
+"eiaCode": 6251,
+"mw": 2580
+},
+{
+"id": "summer",
+"name": "V.C. Summer",
+"units": [
+"Summer"
+],
+"type": "PWR",
+"nrcLocation": "26 miles NW of Columbia, SC",
+"owner": "South Carolina Electric & Gas Co.",
+"region": 2,
+"lat": 34.2983,
+"lon": -81.3153,
+"city": "Jenkinsville",
+"county": "Fairfield",
+"state": "SC",
+"eiaName": "V C Summer",
+"eiaCode": 6127,
+"mw": 977.2
+},
+{
+"id": "surry",
+"name": "Surry",
+"units": [
+"Surry 1",
+"Surry 2"
+],
+"type": "PWR",
+"nrcLocation": "17 miles NW of Newport News, VA",
+"owner": "Dominion Generation",
+"region": 2,
+"lat": 37.1661,
+"lon": -76.6986,
+"city": "Surry",
+"county": "Surry",
+"state": "VA",
+"eiaName": "Surry",
+"eiaCode": 3806,
+"mw": 1676
+},
+{
+"id": "susquehanna",
+"name": "Susquehanna",
+"units": [
+"Susquehanna 1",
+"Susquehanna 2"
+],
+"type": "BWR",
+"nrcLocation": "70 miles NE of Harrisburg, PA",
+"owner": "Susquehanna Nuclear, LLC",
+"region": 1,
+"lat": 41.0919,
+"lon": -76.1462,
+"city": "Berwick",
+"county": "Luzerne",
+"state": "PA",
+"eiaName": "TalenEnergy Susquehanna",
+"eiaCode": 6103,
+"mw": 2494
+},
+{
+"id": "turkey-point",
+"name": "Turkey Point",
+"units": [
+"Turkey Point 3",
+"Turkey Point 4"
+],
+"type": "PWR",
+"nrcLocation": "20 miles S of Miami, FL",
+"owner": "Florida Power & Light Co.",
+"region": 2,
+"lat": 25.4356,
+"lon": -80.3308,
+"city": "Homestead",
+"county": "Miami Dade",
+"state": "FL",
+"eiaName": "Turkey Point",
+"eiaCode": 621,
+"mw": 2952.1
+},
+{
+"id": "vogtle",
+"name": "Vogtle",
+"units": [
+"Vogtle 1",
+"Vogtle 2",
+"Vogtle 3",
+"Vogtle 4"
+],
+"type": "PWR",
+"nrcLocation": "26 miles SE of Augusta, GA",
+"owner": "Southern Nuclear Operating Co.",
+"region": 2,
+"lat": 33.1427,
+"lon": -81.7625,
+"city": "Waynesboro",
+"county": "Burke",
+"state": "GA",
+"eiaName": "Vogtle",
+"eiaCode": 649,
+"mw": 4530
+},
+{
+"id": "waterford",
+"name": "Waterford 3",
+"units": [
+"Waterford 3"
+],
+"type": "PWR",
+"nrcLocation": "25 miles W of New Orleans, LA",
+"owner": "Entergy Nuclear Operations, Inc.",
+"region": 4,
+"lat": 29.995267,
+"lon": -90.471581,
+"city": "Killona",
+"county": "St Charles",
+"state": "LA",
+"eiaName": "Waterford 3",
+"eiaCode": 4270,
+"mw": 1076
+},
+{
+"id": "watts-bar",
+"name": "Watts Bar",
+"units": [
+"Watts Bar 1",
+"Watts Bar 2"
+],
+"type": "PWR",
+"nrcLocation": "60 miles SW of Knoxville, TN",
+"owner": "Tennessee Valley Authority",
+"region": 2,
+"lat": 35.6021,
+"lon": -84.7895,
+"city": "Spring City",
+"county": "Rhea",
+"state": "TN",
+"eiaName": "Watts Bar Nuclear Plant",
+"eiaCode": 7722,
+"mw": 2245
+},
+{
+"id": "wolf-creek",
+"name": "Wolf Creek",
+"units": [
+"Wolf Creek 1"
+],
+"type": "PWR",
+"nrcLocation": "3.5 miles NE of Burlington, KS",
+"owner": "Wolf Creek Nuclear Operating Corp.",
+"region": 4,
+"lat": 38.23926,
+"lon": -95.68978,
+"city": "Burlington",
+"county": "Coffey",
+"state": "KS",
+"eiaName": "Wolf Creek Generating Station",
+"eiaCode": 210,
+"mw": 1176.7
+}
+]

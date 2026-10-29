@@ -1,0 +1,27 @@
+{
+  "retrieved": "2026-10-29",
+  "note": "Only outages with a published public source. Dates are as published by the source and can change.",
+  "sources": {
+    "allied": { "name": "Allied Power — public outage schedule (where their crews are working)", "url": "https://alliedpwr.com/nuclear-outage/" },
+    "enw": { "name": "Energy Northwest — Columbia refueling outages page", "url": "https://www.energy-northwest.com/energy-projects/columbia-generating-station/refueling-outages/" }
+  },
+  "outages": [
+    { "plant": "fitzpatrick", "unit": "FitzPatrick", "label": "1R27", "start": "2026-09-14", "end": "2026-10-05", "src": "allied" },
+    { "plant": "byron", "unit": "Byron 2", "label": "2R26", "start": "2026-09-28", "end": "2026-10-29", "src": "allied" },
+    { "plant": "point-beach", "unit": "Point Beach 1", "label": "1R43", "start": "2026-10-10", "end": "2026-11-08", "src": "allied" },
+    { "plant": "peach-bottom", "unit": "Peach Bottom 2", "label": "2R26", "start": "2026-10-12", "end": "2026-11-05", "src": "allied" },
+    { "plant": "comanche-peak", "unit": "Comanche Peak 1", "label": "1R25", "start": "2026-10-18", "end": "2026-11-11", "src": "allied" },
+    { "plant": "dresden", "unit": "Dresden 3", "label": "3R29", "start": "2026-10-26", "end": "2026-11-19", "src": "allied" },
+    { "plant": "turkey-point", "unit": "Turkey Point 4", "label": "4R36", "start": "2027-02-13", "end": "2027-04-02", "src": "allied" },
+    { "plant": "lasalle", "unit": "La Salle 2", "label": "2R21", "start": "2027-02-15", "end": "2027-03-06", "src": "allied" },
+    { "plant": "calvert-cliffs", "unit": "Calvert Cliffs 2", "label": "2R27", "start": "2027-02-22", "end": "2027-03-17", "src": "allied" },
+    { "plant": "perry", "unit": "Perry 1", "label": "1R21", "start": "2027-02-28", "end": "2027-03-30", "src": "allied" },
+    { "plant": "quad-cities", "unit": "Quad Cities 1", "label": "1R29", "start": "2027-03-15", "end": "2027-03-31", "src": "allied" },
+    { "plant": "columbia", "unit": "Columbia Generating Station", "label": "R-28", "start": "2027-03-17", "end": null, "src": "enw" },
+    { "plant": "nine-mile-point", "unit": "Nine Mile Point 1", "label": "1R29", "start": "2027-03-22", "end": "2027-04-11", "src": "allied" },
+    { "plant": "braidwood", "unit": "Braidwood 1", "label": "1R26", "start": "2027-04-05", "end": "2027-05-06", "src": "allied" },
+    { "plant": "st-lucie", "unit": "Saint Lucie 1", "label": "1R34", "start": "2027-04-10", "end": "2027-05-20", "src": "allied" },
+    { "plant": "limerick", "unit": "Limerick 2", "label": "2R19", "start": "2027-04-19", "end": "2027-05-13", "src": "allied" },
+    { "plant": "beaver-valley", "unit": "Beaver Valley 1", "label": "1R31", "start": "2027-04-25", "end": "2027-05-26", "src": "allied" }
+  ]
+}

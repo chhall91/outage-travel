@@ -1,0 +1,43 @@
+// 390x844 headless Chrome walk-through: outage → hub → housing / pay / crew board, plus offline check.
+import { chromium } from 'playwright-core';
+const URL = process.env.URL || 'http://localhost:4175/outage-travel/';
+const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+const p = await ctx.newPage();
+const errors = [];
+p.on('pageerror', (e) => errors.push(e.message));
+p.on('console', (m) => { if (m.type() === 'error' && !/nrc\.gov|CORS|Failed to load resource|ERR_FAILED/.test(m.text())) errors.push(m.text()); });
+const shot = async (n, full = false) => { await p.waitForTimeout(2100); await p.screenshot({ path: `screenshots/${n}.png`, fullPage: full }); console.log('shot', n); };
+await p.goto(URL); await p.evaluate(() => localStorage.clear()); await p.goto(URL + '#/'); await p.waitForTimeout(2500);
+await shot('01-home-empty');
+await p.tap('a[href="#/add"]'); await p.fill('#pq', 'nine mile'); await shot('02-add-pick-plant');
+await p.tap('.pitem'); await shot('03-add-details');
+if (await p.$('.use')) await p.tap('.use');
+await p.fill('#company', 'Example Contractor'); await p.tap('button[type=submit]'); await p.waitForTimeout(500);
+await shot('04-outage-hub');
+const hubUrl = p.url();
+await p.tap('a[href$="/housing"]'); await shot('05-housing');
+const links = await p.$$eval('.lcard', (as) => as.map((a) => a.href)); console.log(links.join('\n'));
+await p.fill('#ll', '43.4553, -76.5105'); await shot('06-housing-distance', true);
+await p.goto(hubUrl); await p.tap('a[href$="/pay"]'); await p.fill('#rate', '38.50'); await p.tap('[data-h="40,32"]'); await shot('07-pay-perdiem', true);
+console.log('pay:', (await p.textContent('#out')).replace(/\s+/g, ' '));
+await p.goto(hubUrl); await p.tap('a[href$="/board"]'); await shot('08-crew-board-empty');
+await p.tap('a[href*="post/new?k=ride_offer"]'); await p.fill('#ptitle', 'Oswego → plant, day shift 5:15a'); await p.fill('#details', 'Pickup at the Walmart lot. Split gas.');
+await p.fill('#when', 'Mon–Sat'); await p.fill('#seats', '3'); await p.fill('#price', '$20/wk'); await p.fill('#author', 'Colton'); await p.fill('#contact', 'text 555-0100');
+await p.tap('button[type=submit]'); await p.waitForTimeout(400); await shot('09-crew-board-post');
+await p.tap('a[href$="/share"]'); await shot('10-share-qr');
+const share = await p.inputValue('#url');
+await p.goto(URL + '#/plant/nine-mile-point'); await shot('11-plant-detail', true);
+await p.goto(URL + '#/upcoming'); await shot('12-upcoming');
+await p.goto(URL + '#/'); await p.waitForTimeout(800); await shot('13-home-with-outage', true);
+// import on a fresh phone
+const p2 = await (await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })).newPage();
+await p2.goto(share); await p2.waitForTimeout(1500); await p2.screenshot({ path: 'screenshots/14-import-shared-post.png' });
+await p2.tap('#imp'); await p2.waitForTimeout(500); console.log('import ->', p2.url(), await p2.$$eval('.post', (x) => x.length));
+// offline
+await p.evaluate(() => navigator.serviceWorker.ready); await p.reload(); await p.waitForTimeout(2500); await ctx.setOffline(true); await p.reload(); await p.waitForTimeout(1500);
+console.log('offline title:', await p.textContent('#title'), '| status line:', (await p.textContent('.hint') || '').slice(0, 80));
+await p.goto(hubUrl); await p.waitForTimeout(800); await p.screenshot({ path: 'screenshots/15-offline-hub.png' });
+console.log('offline hub ok:', !!(await p.$('.hero')));
+console.log('errors:', errors.length ? errors : 'none');
+await b.close();
