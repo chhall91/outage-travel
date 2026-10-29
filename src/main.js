@@ -2,6 +2,7 @@ import './style.css';
 import plants from './data/plants.json';
 import perdiem from './data/perdiem.json';
 import upcoming from './data/upcoming.json';
+import { downNow, upcomingOnly } from './lib/outlists.js';
 import { get, set, outages, posts, notes, ratings } from './storage.js';
 import { DIMS, newRating, aggregate, mergeRating, decodeRating, ratingShareUrl, stars } from './lib/ratings.js';
 import { SECTIONS, mapsSearch, yelpSearch, newNote, decodeNotes, mergeNotes, notesShareUrl } from './lib/local.js';
@@ -33,8 +34,9 @@ app.innerHTML = `
   <main id="view" tabindex="-1"></main>
   <nav class="tabbar">
     <a href="#/" data-nav="home"><span>⌂</span>My outages</a>
-    <a href="#/plants" data-nav="plants"><span>⚛</span>Plants</a>
+    <a href="#/down" data-nav="down"><span>🔴</span>Down now</a>
     <a href="#/upcoming" data-nav="upcoming"><span>📅</span>Upcoming</a>
+    <a href="#/plants" data-nav="plants"><span>⚛</span>Plants</a>
     <a href="#/about" data-nav="about"><span>ⓘ</span>About</a>
   </nav>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>`;
@@ -93,10 +95,11 @@ function home() {
       : `<div class="card empty"><div class="big">⚛</div><h2>Where’s your next outage?</h2><p class="hint">Add it once — housing, per diem & pay, and the crew board all open from it.</p></div>`}
     <a class="btn primary" href="#/add">＋ Add an outage</a>
     <a class="ocard mt" href="#/forum" id="home-forum"><div class="ohead"><b>💬 Forum</b>${forum.enabled ? '' : '<span class="pill">Coming soon</span>'}</div><div class="osub">Plant boards + overall: housing, food, rides, work & pay</div><span class="chev">›</span></a>
-    <div class="card mt"><h3>Units offline now <small>${offline.length}</small></h3>
+    <div class="card mt"><h3>🔴 Down now <small>${offline.length} offline</small></h3>
       ${offline.length ? offline.map(({ p, u }) => `<a class="row-link" href="#/plant/${p.id}">${unitRow(u)}</a>`).join('') : '<p class="hint">None offline in the latest report.</p>'}
       ${statusLine()}
       <p class="hint">0% power = shut down. That includes refueling outages, maintenance and other shutdowns. The report doesn’t say which.</p>
+      <a class="btn-link mt" href="#/down">See all in Down now ›</a> · <a class="btn-link mt" href="#/upcoming">📅 Upcoming outages ›</a>
     </div>`;
 }
 
@@ -375,7 +378,7 @@ function plantView(p) {
     <div class="card"><h3>Shutdowns in the last 365 days</h3>${hist.length ? hist.map((h) => `<div class="kv"><span>${esc(h.u)}</span><b>${fmtDate(h.start)} – ${h.ongoing ? 'now' : fmtDate(h.end)} · ${h.days} d</b></div>`).join('') : '<p class="hint">No shutdowns of 7 days or more.</p>'}
       <p class="hint">This counts runs of 0% power lasting 7 days or more in the NRC daily report. Most are refueling outages, but the report doesn’t give a reason.</p></div>
     ${ratingSummary(p, false)}
-    <a class="btn primary" href="#/add?plant=${p.id}">＋ This is my outage</a>`;
+    <a class="btn primary" href="#/add?plant=${p.id}">＋ Add as my outage</a>`;
   view.querySelectorAll('[data-rdel]').forEach((b) => (b.onclick = () => { if (confirm('Delete this rating?')) { ratings.remove(b.dataset.rdel); plantView(p); } }));
 }
 const CREW_NOTE = '<p class="hint">Ratings from your crew, shared by link. Shared ratings from everyone are coming.</p>';
@@ -431,14 +434,27 @@ function importRating(code) {
   if ($('imp')) $('imp').onclick = () => { ratings.save(mergeRating(ratings.all(), r)); toast('Rating added'); location.replace(`#/plant/${p.id}`); };
 }
 function upcomingView() {
-  chrome('Upcoming outages', { nav: 'upcoming' });
-  const l = upcoming.outages.filter((o) => (o.end || o.start) >= today());
-  view.innerHTML = `<div class="spot">Only outages with published dates are listed here, and each one links to its source. Dates can change. This is not every plant’s schedule.</div>
-    ${l.map((u) => { const p = plantById[u.plant]; return `<div class="card up"><div class="ohead"><b>${esc(u.unit)} · ${esc(u.label)}</b>${u.start <= today() ? '<span class="pill bad">In progress</span>' : ''}</div>
-      <div class="osub">${fmtDate(u.start)}${u.end ? ' – ' + fmtDate(u.end) : ' (start)'} · ${esc(p.city)}, ${p.state}</div>
-      <div class="osub">Source: <a href="${upcoming.sources[u.src].url}" target="_blank" rel="noopener">${esc(upcoming.sources[u.src].name.split(' — ')[0])}</a></div>
-      <div class="actions"><a class="btn-sm primary" href="#/add?plant=${u.plant}&s=${u.start}&e=${u.end || ''}&u=${encodeURIComponent(u.unit)}">I’m working this</a><a class="btn-sm" href="#/plant/${u.plant}">Plant</a></div></div>`; }).join('')}
-    <p class="fine">Checked ${fmtDate(upcoming.retrieved)}. For plants not listed here, add your outage yourself with the dates your company gave you.</p>`;
+  chrome('📅 Upcoming outages', { nav: 'upcoming' });
+  const l = upcomingOnly(upcoming, today());
+  view.innerHTML = `<div class="spot">Outages that haven’t started yet, from published schedules, soonest first. Units already down are in 🔴 Down now.</div>
+    ${l.length ? l.map((u) => { const p = plantById[u.plant]; return `<a class="ocard up" href="#/plant/${u.plant}"><div class="ohead"><b>${esc(u.unit)} · ${esc(u.label)}</b><span class="pill">Starts ${fmtDate(u.start)}</span></div>
+      <div class="osub">${fmtDate(u.start)}${u.end ? ' – ' + fmtDate(u.end) : ' (start)'} · ${esc(p.name)}, ${esc(p.city)}, ${p.state}</div>
+      <div class="osub">Source: ${esc(upcoming.sources[u.src].name.split(' — ')[0])}</div><span class="chev">›</span></a>`; }).join('') : '<div class="card"><p class="hint">No published upcoming outages right now.</p></div>'}
+    <p class="fine">Checked ${fmtDate(upcoming.retrieved)}. Dates can change; this isn’t every plant’s schedule. Sources: ${Object.values(upcoming.sources).map((x) => `<a href="${x.url}" target="_blank" rel="noopener">${esc(x.name.split(' — ')[0])}</a>`).join(', ')}.</p>`;
+}
+function downView() {
+  chrome('🔴 Down now', { nav: 'down' });
+  const l = downNow(status, plants, upcoming);
+  const off = l.filter((x) => x.power === 0), red = l.filter((x) => x.power > 0);
+  const card = (x) => `<a class="ocard" href="#/plant/${x.plant.id}"><div class="ohead"><b>${esc(x.unit)}</b><span class="pill ${x.power === 0 ? 'bad' : 'warn'}">${x.power === 0 ? 'Offline' : x.power + '% power'}</span></div>
+    <div class="osub">${esc(x.plant.city)}, ${x.plant.state}${x.downSince ? ` · down ${x.sinceAtLeast ? 'since at least' : 'since'} ${fmtDate(x.downSince)} (${daysBetween(x.downSince, status.reportDate) + 1} d)` : ''}</div>
+    ${x.published ? `<div class="osub">Published outage: ${esc(x.published.label)}${x.published.end ? ', planned to ' + fmtDate(x.published.end) : ''}</div>` : ''}
+    <div class="osub">NRC report ${fmtDate(x.date)}</div><span class="chev">›</span></a>`;
+  view.innerHTML = `<div class="spot">Units shut down or at reduced power right now, from the NRC daily report.</div>
+    ${!status ? '<div class="card"><p class="hint">Reactor status not loaded yet (needs one connection).</p></div>' : `
+    <h3 class="sec">Offline (0%) · ${off.length}</h3>${off.map(card).join('') || '<p class="hint">None offline.</p>'}
+    <h3 class="sec">Reduced power · ${red.length}</h3>${red.map(card).join('') || '<p class="hint">None at reduced power.</p>'}`}
+    ${statusLine()}<p class="fine">The NRC report doesn’t say why a unit is down. It may be refueling, maintenance, or another shutdown.</p>`;
 }
 function about() {
   chrome('About & sources', { nav: 'about' });
@@ -530,6 +546,7 @@ function render() {
   }
   if (parts[0] === 'forum') return forum.route(parts, q);
   if (parts[0] === 'upcoming') return upcomingView();
+  if (parts[0] === 'down') return downView();
   if (parts[0] === 'about') return about();
   if (parts[0] === 'import' && q.p) return importView(q.p);
   if (parts[0] === 'import' && q.r) return importRating(q.r);
