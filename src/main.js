@@ -2,7 +2,8 @@ import './style.css';
 import plants from './data/plants.json';
 import perdiem from './data/perdiem.json';
 import upcoming from './data/upcoming.json';
-import { get, set, outages, posts, notes } from './storage.js';
+import { get, set, outages, posts, notes, ratings } from './storage.js';
+import { DIMS, newRating, aggregate, mergeRating, decodeRating, ratingShareUrl, stars } from './lib/ratings.js';
 import { SECTIONS, mapsSearch, yelpSearch, newNote, decodeNotes, mergeNotes, notesShareUrl } from './lib/local.js';
 import { lookupRate, weeklyPay, outageWeeks } from './lib/perdiem.js';
 import { milesBetween, driveEstimate, fmtDrive } from './lib/geo.js';
@@ -168,6 +169,7 @@ function hub(o) {
       <a class="tile big" href="#/plant/${p.id}"><span class="t-ico">⚛</span><b>Plant info</b><small>Units, owner, status history</small></a>
       <a class="tile big wide" href="#/o/${o.id}/local"><span class="t-ico">🍽️</span><b>Food & local</b><small>${(() => { const k = notes.all().filter((x) => x.outageId === o.id).length; return k ? `${k} saved spot${k > 1 ? 's' : ''} · ` : ''; })()}Diners, 24-hr food, laundry, gyms, boots</small></a>
     </div>
+    ${ratingSummary(p, true)}
     ${o.notes ? `<div class="card"><h3>Notes</h3><p class="pre">${esc(o.notes)}</p></div>` : ''}
     <a class="btn ghost" href="#/o/${o.id}/edit">Edit outage</a>`;
 }
@@ -261,7 +263,7 @@ function pay(o) {
   calc();
 }
 
-const COMING = `<div class="note"><b>Crew sharing is coming.</b> For now, posts stay on this phone. To share one, send its link or QR code, and the other person can import it with one tap. Live sync across the crew comes with a later update.</div>`;
+const COMING = `<div class="spot"><b>Crew sharing is coming.</b> For now, posts stay on this phone. To share one, send its link or QR code, and the other person can import it with one tap. Live sync across the crew comes with a later update.</div>`;
 function board(o) {
   const p = plantById[o.plantId];
   chrome('Crew board', { back: true, nav: 'home' });
@@ -369,12 +371,66 @@ function plantView(p) {
     ${ups.length ? `<div class="card"><h3>Published outage dates</h3>${ups.map((u) => `<div class="kv"><span>${esc(u.unit)} ${esc(u.label)}</span><b>${fmtDate(u.start)}${u.end ? ' – ' + fmtDate(u.end) : ' (start)'}</b></div><p class="hint">Source: <a href="${upcoming.sources[u.src].url}" target="_blank" rel="noopener">${esc(upcoming.sources[u.src].name)}</a>, checked ${fmtDate(upcoming.retrieved)}</p>`).join('')}</div>` : ''}
     <div class="card"><h3>Shutdowns in the last 365 days</h3>${hist.length ? hist.map((h) => `<div class="kv"><span>${esc(h.u)}</span><b>${fmtDate(h.start)} – ${h.ongoing ? 'now' : fmtDate(h.end)} · ${h.days} d</b></div>`).join('') : '<p class="hint">No shutdowns of 7 days or more.</p>'}
       <p class="hint">This counts runs of 0% power lasting 7 days or more in the NRC daily report. Most are refueling outages, but the report doesn’t give a reason.</p></div>
+    ${ratingSummary(p, false)}
     <a class="btn primary" href="#/add?plant=${p.id}">＋ This is my outage</a>`;
+  view.querySelectorAll('[data-rdel]').forEach((b) => (b.onclick = () => { if (confirm('Delete this rating?')) { ratings.remove(b.dataset.rdel); plantView(p); } }));
+}
+const CREW_NOTE = '<p class="hint">Ratings from your crew, shared by link. Shared ratings from everyone are coming.</p>';
+function ratingSummary(p, compact) {
+  const all = ratings.all(), g = aggregate(all, p.id), list = all.filter((r) => r.plantId === p.id);
+  const others = list.filter((r) => !r.mine).length;
+  const head = `<div class="ohead"><h3>⭐ Worker ratings</h3>${g.count ? `<span class="pill good">${g.avg.overall} · ${g.count} rating${g.count > 1 ? 's' : ''}</span>` : ''}</div>`;
+  if (compact) return `<a class="card ocard" href="#/plant/${p.id}" id="rsum">${head}${g.count ? `<div class="stars">${stars(g.avg.overall)}</div><div class="osub">${others} from others · tap to see all or rate</div>` : '<div class="osub">No ratings yet. Tap to rate this plant.</div>'}<span class="chev">›</span></a>`;
+  return `<div class="card" id="ratings">${head}
+    ${g.count ? DIMS.map((d) => `<div class="kv"><span>${d.label}</span><b>${g.avg[d.id] == null ? '—' : `<span class="stars">${stars(g.avg[d.id])}</span> ${g.avg[d.id]}`}</b></div>`).join('') : '<p class="hint">No ratings yet.</p>'}
+    ${list.map((r) => `<div class="spot"><div><b>${r.mine ? 'You' : 'Shared'} · <span class="stars">${stars(r.scores.overall)}</span></b><div class="osub">${[r.season, r.craft].filter(Boolean).map(esc).join(' · ')}</div>${r.review ? `<p class="pre">${esc(r.review)}</p>` : ''}</div>
+      <div class="actions">${r.mine ? `<a class="btn-sm primary" href="#/plant/${p.id}/rate/${r.id}/share">Share</a><a class="btn-sm" href="#/plant/${p.id}/rate/${r.id}">Edit</a>` : ''}<button class="btn-sm" data-rdel="${r.id}">Delete</button></div></div>`).join('')}
+    <a class="btn primary mt" href="#/plant/${p.id}/rate">Rate this plant</a>${CREW_NOTE}</div>`;
+}
+function rateForm(p, x) {
+  chrome('Rate ' + p.name, { back: true, nav: 'plants' });
+  const sc = { ...(x?.scores || {}) };
+  view.innerHTML = `<form class="card" id="rf">
+    ${DIMS.map((d) => `<span class="lbl mt">${d.label}${d.id === 'overall' ? ' *' : ''}</span><div class="seg starseg" data-d="${d.id}">${[1, 2, 3, 4, 5].map((n) => `<button type="button" data-v="${n}" aria-label="${n} stars">${n}★</button>`).join('')}</div>${d.id === 'gate' ? '<p class="hint">Rate the wait time only. No procedure details.</p>' : ''}`).join('')}
+    <div class="row gap"><label class="field grow"><span class="lbl">Season worked</span><input type="text" id="season" maxlength="20" value="${esc(x?.season || '')}" placeholder="Spring 2026"></label>
+      <label class="field grow"><span class="lbl">Craft / role</span><input type="text" id="craft" maxlength="40" value="${esc(x?.craft || get('ot.craft', ''))}" placeholder="Pipefitter"></label></div>
+    <label class="field"><span class="lbl">Short review (optional)</span><textarea id="review" rows="3" maxlength="400">${esc(x?.review || '')}</textarea></label>
+    <p class="hint">⚠️ No security, site layout, or proprietary info, and don’t name individuals.</p>
+    <button class="btn primary" type="submit">Save rating</button></form>`;
+  const paint = () => view.querySelectorAll('.starseg').forEach((g) => g.querySelectorAll('button').forEach((b) => b.classList.toggle('on', +b.dataset.v <= (sc[g.dataset.d] || 0))));
+  view.querySelectorAll('.starseg').forEach((g) => (g.onclick = (e) => { const b = e.target.closest('button'); if (!b) return; const v = +b.dataset.v; sc[g.dataset.d] = sc[g.dataset.d] === v ? null : v; paint(); }));
+  paint();
+  $('rf').onsubmit = (e) => {
+    e.preventDefault();
+    let r; try { r = newRating({ id: x?.id, createdAt: x?.createdAt, plantId: p.id, scores: sc, review: $('review').value, season: $('season').value, craft: $('craft').value }); } catch { toast('Pick an overall rating'); return; }
+    set('ot.craft', r.craft); ratings.put(r); toast('Rating saved'); location.replace(`#/plant/${p.id}`);
+  };
+}
+function shareRating(p, r) {
+  chrome('Share rating', { back: true, nav: 'plants' });
+  const url = ratingShareUrl(location.origin + location.pathname, r);
+  let svg = ''; try { const q = qrcode(0, 'M'); q.addData(url, 'Byte'); q.make(); svg = q.createSvgTag({ cellSize: 4, margin: 4, scalable: true }); } catch { svg = '<p class="hint">Too long for a QR code. Use the link.</p>'; }
+  view.innerHTML = `<div class="card center"><b>${esc(p.name)} · ${stars(r.scores.overall)}</b><div class="qr">${svg}</div><p class="hint">Scan with a phone camera to add your rating to theirs.</p></div>
+    <div class="card"><label class="field"><span class="lbl">Share link</span><textarea rows="3" readonly id="url">${esc(url)}</textarea></label>
+    ${navigator.share ? '<button class="btn primary" id="ns">Share… (text / group chat)</button>' : ''}<button class="btn ghost mt" id="cp">Copy link</button>
+    <p class="hint">The rating is packed into the link. Your name isn’t included.</p></div>`;
+  $('cp').onclick = async () => { try { await navigator.clipboard.writeText(url); toast('Link copied'); } catch { $('url').select(); document.execCommand('copy'); toast('Link copied'); } };
+  if ($('ns')) $('ns').onclick = () => navigator.share({ title: 'Rating: ' + p.name, url }).catch(() => {});
+}
+function importRating(code) {
+  chrome('Import rating', { back: true, nav: 'plants' });
+  let r; try { r = decodeRating(code); } catch { view.innerHTML = '<div class="card"><p class="hint">That link is damaged or from a newer version.</p></div>'; return; }
+  const p = plantById[r.plantId];
+  view.innerHTML = `<div class="card"><h3>Rating shared with you</h3><b>${p ? esc(p.name) : 'Unknown plant'} · ${stars(r.scores.overall)}</b>
+    ${DIMS.map((d) => `<div class="kv"><span>${d.label}</span><b>${r.scores[d.id] ? stars(r.scores[d.id]) : '—'}</b></div>`).join('')}
+    <div class="osub">${[r.season, r.craft].filter(Boolean).map(esc).join(' · ')}</div>${r.review ? `<p class="pre">${esc(r.review)}</p>` : ''}
+    ${p ? '<button class="btn primary" id="imp">Add to ratings</button>' : ''}</div>`;
+  if ($('imp')) $('imp').onclick = () => { ratings.save(mergeRating(ratings.all(), r)); toast('Rating added'); location.replace(`#/plant/${p.id}`); };
 }
 function upcomingView() {
   chrome('Upcoming outages', { nav: 'upcoming' });
   const l = upcoming.outages.filter((o) => (o.end || o.start) >= today());
-  view.innerHTML = `<div class="note">Only outages with published dates are listed here, and each one links to its source. Dates can change. This is not every plant’s schedule.</div>
+  view.innerHTML = `<div class="spot">Only outages with published dates are listed here, and each one links to its source. Dates can change. This is not every plant’s schedule.</div>
     ${l.map((u) => { const p = plantById[u.plant]; return `<div class="card up"><div class="ohead"><b>${esc(u.unit)} · ${esc(u.label)}</b>${u.start <= today() ? '<span class="pill bad">In progress</span>' : ''}</div>
       <div class="osub">${fmtDate(u.start)}${u.end ? ' – ' + fmtDate(u.end) : ' (start)'} · ${esc(p.city)}, ${p.state}</div>
       <div class="osub">Source: <a href="${upcoming.sources[u.src].url}" target="_blank" rel="noopener">${esc(upcoming.sources[u.src].name.split(' — ')[0])}</a></div>
@@ -409,7 +465,7 @@ function localView(o) {
         <div class="seg" id="src"><button type="button" class="${yelp ? '' : 'on'}" data-v="0">Google Maps</button><button type="button" class="${yelp ? 'on' : ''}" data-v="1">+ Yelp links</button></div>
         <p class="hint">📶 These open live map searches, so they need signal. Your saved spots below work offline.</p></div>
       <div class="card" id="fav"><h3>⭐ My spots & notes</h3>
-        ${mine.length ? mine.map((x) => `<div class="note"><div><b>${esc(x.name)}</b>${x.cat && catLabel[x.cat] ? ` <span class="pill muted">${esc(catLabel[x.cat])}</span>` : ''}${x.note ? `<div class="osub">${esc(x.note)}</div>` : ''}</div>
+        ${mine.length ? mine.map((x) => `<div class="spot"><div><b>${esc(x.name)}</b>${x.cat && catLabel[x.cat] ? ` <span class="pill muted">${esc(catLabel[x.cat])}</span>` : ''}${x.note ? `<div class="osub">${esc(x.note)}</div>` : ''}</div>
           <div class="actions"><a class="btn-sm" target="_blank" rel="noopener" href="${esc(mapsSearch(p, x.name + (town ? ' ' + town.city + ' ' + town.st : ''), miles))}">Map ↗</a><button class="btn-sm" data-del="${x.id}">Delete</button></div></div>`).join('') : '<p class="hint">Save places worth remembering, e.g. “Joe’s Diner, opens 4:30am”.</p>'}
         <form id="nf"><label class="field"><span class="lbl">Place</span><input type="text" id="nname" maxlength="80" placeholder="Joe’s Diner"></label>
           <label class="field"><span class="lbl">Note</span><input type="text" id="nnote" maxlength="300" placeholder="Opens 4:30am, big portions"></label>
@@ -443,7 +499,7 @@ function importNotes(code) {
   chrome('Import spots', { back: true, nav: 'home' });
   let d; try { d = decodeNotes(code); } catch { view.innerHTML = '<div class="card"><p class="hint">That link is damaged or from a newer version.</p></div>'; return; }
   const p = plantById[d.plantId]; const mine = outages.all().filter((x) => x.plantId === d.plantId);
-  view.innerHTML = `<div class="card"><h3>Spots shared with you</h3>${d.notes.map((x) => `<div class="note"><div><b>${esc(x.name)}</b>${x.note ? `<div class="osub">${esc(x.note)}</div>` : ''}</div></div>`).join('')}
+  view.innerHTML = `<div class="card"><h3>Spots shared with you</h3>${d.notes.map((x) => `<div class="spot"><div><b>${esc(x.name)}</b>${x.note ? `<div class="osub">${esc(x.note)}</div>` : ''}</div></div>`).join('')}
     <p class="hint">${p ? esc(p.name) : 'Unknown plant'}</p>${p ? `<button class="btn primary" id="imp">${mine.length ? `Add to my ${esc(p.name)} outage` : `Add — and create a ${esc(p.name)} outage`}</button>` : ''}</div>`;
   if ($('imp')) $('imp').onclick = () => {
     let o = mine[0];
@@ -463,10 +519,15 @@ function render() {
   if (!parts.length) return home();
   if (parts[0] === 'add') return outageForm({ plantId: plantById[q.plant] ? q.plant : null, start: q.s || '', end: q.e || '', units: q.u ? [q.u] : [] }, true);
   if (parts[0] === 'plants') return plantsView();
-  if (parts[0] === 'plant' && plantById[parts[1]]) return plantView(plantById[parts[1]]);
+  if (parts[0] === 'plant' && plantById[parts[1]]) {
+    const p = plantById[parts[1]];
+    if (parts[2] === 'rate') { const r = parts[3] && ratings.get(parts[3]); if (r && parts[4] === 'share') return shareRating(p, r); return rateForm(p, r || null); }
+    return plantView(p);
+  }
   if (parts[0] === 'upcoming') return upcomingView();
   if (parts[0] === 'about') return about();
   if (parts[0] === 'import' && q.p) return importView(q.p);
+  if (parts[0] === 'import' && q.r) return importRating(q.r);
   if (parts[0] === 'import' && q.n) return importNotes(q.n);
   if (parts[0] === 'o') {
     const o = outages.get(parts[1]);

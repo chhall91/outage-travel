@@ -342,6 +342,10 @@ h3 small { font-size: 14px; color: var(--accent); }
 .tile.wide { grid-column: 1 / -1; }
 h3.sec { margin: 18px 4px 8px; }
 .ylink { display: block; padding: 10px 14px; margin: -4px 0 6px; color: var(--accent); font-size: 14px; min-height: 44px; }
-.note { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
-.note .actions { flex-shrink: 0; }
+.spot { padding: 12px 0; border-top: 1px solid var(--line); min-width: 0; overflow-wrap: anywhere; }
+.spot .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.kv .stars, .spot .stars { color: #f5b301; }
 select { width: 100%; min-height: 48px; font-size: 16px; color: var(--text); background: var(--surface2); border: 2px solid var(--line); border-radius: 12px; padding: 0 10px; }
+.stars { color: #f5b301; letter-spacing: 1px; }
+.starseg button { font-size: 17px; }
+a.card.ocard { display: block; color: inherit; }
