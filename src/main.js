@@ -11,6 +11,7 @@ import { housingLinks, refTown, mapUrl, directionsUrl, stateName } from './lib/l
 import { KINDS, newPost, editPost, claimPost, reopenPost, mergePost, shareUrl, decodePost, uid } from './lib/board.js';
 import { NRC_STATUS_URL, NRC_STATUS_PAGE, parseStatus, unitState } from './lib/status.js';
 import qrcode from 'qrcode-generator';
+import { makeForum } from './forum-ui.js';
 
 const VERSION = '0.1.0';
 const BASE = import.meta.env.BASE_URL;
@@ -91,6 +92,7 @@ function home() {
         ${o.company ? `<div class="osub">${esc(o.company)}</div>` : ''}<span class="chev">›</span></a>`; }).join('')}</div>`
       : `<div class="card empty"><div class="big">⚛</div><h2>Where’s your next outage?</h2><p class="hint">Add it once — housing, per diem & pay, and the crew board all open from it.</p></div>`}
     <a class="btn primary" href="#/add">＋ Add an outage</a>
+    <a class="ocard mt" href="#/forum" id="home-forum"><div class="ohead"><b>💬 Forum</b>${forum.enabled ? '' : '<span class="pill">Coming soon</span>'}</div><div class="osub">Plant boards + overall: housing, food, rides, work & pay</div><span class="chev">›</span></a>
     <div class="card mt"><h3>Units offline now <small>${offline.length}</small></h3>
       ${offline.length ? offline.map(({ p, u }) => `<a class="row-link" href="#/plant/${p.id}">${unitRow(u)}</a>`).join('') : '<p class="hint">None offline in the latest report.</p>'}
       ${statusLine()}
@@ -167,7 +169,8 @@ function hub(o) {
       <a class="tile big" href="#/o/${o.id}/pay"><span class="t-ico">💵</span><b>Pay & per diem</b><small>GSA FY${r.fy}: ${money(r.lodging)} + ${money(r.mie)}/day</small></a>
       <a class="tile big" href="#/o/${o.id}/board"><span class="t-ico">🤝</span><b>Crew board</b><small>${n ? `${n} open post${n > 1 ? 's' : ''}` : 'Rooms & rides'}</small></a>
       <a class="tile big" href="#/plant/${p.id}"><span class="t-ico">⚛</span><b>Plant info</b><small>Units, owner, status history</small></a>
-      <a class="tile big wide" href="#/o/${o.id}/local"><span class="t-ico">🍽️</span><b>Food & local</b><small>${(() => { const k = notes.all().filter((x) => x.outageId === o.id).length; return k ? `${k} saved spot${k > 1 ? 's' : ''} · ` : ''; })()}Diners, 24-hr food, laundry, gyms, boots</small></a>
+      <a class="tile big" href="#/forum/${p.id}"><span class="t-ico">💬</span><b>Forum</b><small>${forum.enabled ? 'Talk with other travelers' : 'Coming soon'}</small></a>
+      <a class="tile big" href="#/o/${o.id}/local"><span class="t-ico">🍽️</span><b>Food & local</b><small>${(() => { const k = notes.all().filter((x) => x.outageId === o.id).length; return k ? `${k} saved spot${k > 1 ? 's' : ''} · ` : ''; })()}Diners, 24-hr food, laundry, gyms, boots</small></a>
     </div>
     ${ratingSummary(p, true)}
     ${o.notes ? `<div class="card"><h3>Notes</h3><p class="pre">${esc(o.notes)}</p></div>` : ''}
@@ -509,6 +512,7 @@ function importNotes(code) {
     toast('Spots added'); location.replace(`#/o/${o.id}/local`);
   };
 }
+const forum = makeForum({ view, chrome, toast, esc, plantById, $ });
 // ---------- router ----------
 function render() {
   const h = location.hash.replace(/^#\/?/, '');
@@ -524,6 +528,7 @@ function render() {
     if (parts[2] === 'rate') { const r = parts[3] && ratings.get(parts[3]); if (r && parts[4] === 'share') return shareRating(p, r); return rateForm(p, r || null); }
     return plantView(p);
   }
+  if (parts[0] === 'forum') return forum.route(parts, q);
   if (parts[0] === 'upcoming') return upcomingView();
   if (parts[0] === 'about') return about();
   if (parts[0] === 'import' && q.p) return importView(q.p);

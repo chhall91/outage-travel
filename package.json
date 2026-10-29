@@ -11,8 +11,21 @@
     "test": "vitest run",
     "data": "python3 scripts/build-data.py",
     "status": "node scripts/fetch-status.mjs",
-    "screenshots": "node scripts/screenshots.mjs"
+    "screenshots": "node scripts/screenshots.mjs",
+    "forum:server": "node server/forum-server.mjs",
+    "build:tunnel": "VITE_FORUM_API=/api vite build --outDir dist-tunnel"
   },
-  "devDependencies": { "playwright-core": "^1.63.0", "vite": "^6.4.3", "vitest": "^3.2.7" },
-  "dependencies": { "fflate": "^0.8.3", "qrcode-generator": "^2.0.4" }
+  "devDependencies": {
+    "playwright-core": "^1.63.0",
+    "vite": "^6.4.3",
+    "vitest": "^3.2.7"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.109.0",
+    "fflate": "^0.8.3",
+    "qrcode-generator": "^2.0.4"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^11.10.0"
+  }
 }

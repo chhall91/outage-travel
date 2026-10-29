@@ -22,6 +22,8 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  // Forum API: always live, never cached
+  if (url.pathname.includes('/api/')) return;
 
   // Reactor status snapshot: network-first so it stays fresh, cached copy when offline
   if (url.pathname.endsWith('/reactor-status.json')) {

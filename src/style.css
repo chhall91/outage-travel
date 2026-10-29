@@ -349,3 +349,32 @@ select { width: 100%; min-height: 48px; font-size: 16px; color: var(--text); bac
 .stars { color: #f5b301; letter-spacing: 1px; }
 .starseg button { font-size: 17px; }
 a.card.ocard { display: block; color: inherit; }
+
+/* ---------- forum ---------- */
+.segbtn { flex: 1; min-height: 46px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: transparent; color: var(--text); font: 600 15px inherit; font-family: inherit; text-decoration: none; padding: 4px 8px; cursor: pointer; }
+.segbtn.on { background: var(--accent); color: var(--accent-text); }
+.seg.wrap .segbtn { flex: 1 0 40%; }
+a.chip { display: inline-flex; align-items: center; gap: 4px; text-decoration: none; font-size: 15px; }
+.chip small { opacity: .75; font-weight: 700; }
+.tlist { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.tcard { display: block; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; color: var(--text); text-decoration: none; }
+.tcard:active { background: var(--surface2); }
+.thead { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 6px; }
+.thead b { font-size: 17px; }
+.rc { flex: 0 0 auto; font-weight: 700; color: var(--muted); font-size: 14px; }
+.dim { opacity: .55; }
+.post .pre { margin: 10px 0 4px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.post.reply { margin-left: 10px; }
+.ttitle { margin: 0 0 6px; font-size: 20px; }
+.fmeta { color: var(--muted); font-size: 13px; }
+.fmeta b { color: var(--text); }
+.factions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+.factions .btn-sm { min-height: 38px; font-size: 14px; display: inline-flex; align-items: center; text-decoration: none; }
+.btn-sm.flag { color: var(--muted); }
+.bad-t { color: var(--bad); }
+.guide summary { font-weight: 700; cursor: pointer; min-height: 32px; }
+.guide ul { margin: 8px 0 0; padding-left: 20px; }
+.guide li { margin: 4px 0; }
+.sheet-wrap { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; z-index: 50; }
+.sheet-wrap .sheet { width: 100%; background: var(--surface); border-radius: 18px 18px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); }
+.sheet-wrap input { width: 100%; }

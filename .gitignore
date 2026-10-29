@@ -2,3 +2,5 @@ node_modules
 dist
 .env*
 *.log
+server/forum.db*
+dist-tunnel
