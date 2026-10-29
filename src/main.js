@@ -2,7 +2,8 @@ import './style.css';
 import plants from './data/plants.json';
 import perdiem from './data/perdiem.json';
 import upcoming from './data/upcoming.json';
-import { get, set, outages, posts } from './storage.js';
+import { get, set, outages, posts, notes } from './storage.js';
+import { SECTIONS, mapsSearch, yelpSearch, newNote, decodeNotes, mergeNotes, notesShareUrl } from './lib/local.js';
 import { lookupRate, weeklyPay, outageWeeks } from './lib/perdiem.js';
 import { milesBetween, driveEstimate, fmtDrive } from './lib/geo.js';
 import { housingLinks, refTown, mapUrl, directionsUrl, stateName } from './lib/links.js';
@@ -165,6 +166,7 @@ function hub(o) {
       <a class="tile big" href="#/o/${o.id}/pay"><span class="t-ico">💵</span><b>Pay & per diem</b><small>GSA FY${r.fy}: ${money(r.lodging)} + ${money(r.mie)}/day</small></a>
       <a class="tile big" href="#/o/${o.id}/board"><span class="t-ico">🤝</span><b>Crew board</b><small>${n ? `${n} open post${n > 1 ? 's' : ''}` : 'Rooms & rides'}</small></a>
       <a class="tile big" href="#/plant/${p.id}"><span class="t-ico">⚛</span><b>Plant info</b><small>Units, owner, status history</small></a>
+      <a class="tile big wide" href="#/o/${o.id}/local"><span class="t-ico">🍽️</span><b>Food & local</b><small>${(() => { const k = notes.all().filter((x) => x.outageId === o.id).length; return k ? `${k} saved spot${k > 1 ? 's' : ''} · ` : ''; })()}Diners, 24-hr food, laundry, gyms, boots</small></a>
     </div>
     ${o.notes ? `<div class="card"><h3>Notes</h3><p class="pre">${esc(o.notes)}</p></div>` : ''}
     <a class="btn ghost" href="#/o/${o.id}/edit">Edit outage</a>`;
@@ -391,6 +393,66 @@ function about() {
     <p class="fine">Outage Travel v${VERSION} · estimates only, not tax or pay advice.</p>`;
 }
 
+
+function localView(o) {
+  const p = plantById[o.plantId];
+  chrome('Food & local', { back: true, nav: 'home' });
+  const town = refTown(p.nrcLocation);
+  let miles = get('ot.lradius', 10), yelp = get('ot.yelp', false);
+  const catLabel = Object.fromEntries(SECTIONS.flatMap((s) => s.items.map((i) => [i.id, i.icon + ' ' + i.label])));
+  const draw = () => {
+    const mine = notes.all().filter((x) => x.outageId === o.id);
+    view.innerHTML = `
+      <div class="card"><div class="osub">Searches centered on <b>${esc(p.name)}</b>${town ? ` · nearest town <b>${esc(town.city)}, ${town.st}</b>` : ''}</div>
+        <span class="lbl mt">How far out?</span>
+        <div class="seg" id="rad">${[5, 10, 25, 40].map((m) => `<button type="button" class="${m === miles ? 'on' : ''}" data-v="${m}">${m} mi</button>`).join('')}</div>
+        <div class="seg" id="src"><button type="button" class="${yelp ? '' : 'on'}" data-v="0">Google Maps</button><button type="button" class="${yelp ? 'on' : ''}" data-v="1">+ Yelp links</button></div>
+        <p class="hint">📶 These open live map searches, so they need signal. Your saved spots below work offline.</p></div>
+      <div class="card" id="fav"><h3>⭐ My spots & notes</h3>
+        ${mine.length ? mine.map((x) => `<div class="note"><div><b>${esc(x.name)}</b>${x.cat && catLabel[x.cat] ? ` <span class="pill muted">${esc(catLabel[x.cat])}</span>` : ''}${x.note ? `<div class="osub">${esc(x.note)}</div>` : ''}</div>
+          <div class="actions"><a class="btn-sm" target="_blank" rel="noopener" href="${esc(mapsSearch(p, x.name + (town ? ' ' + town.city + ' ' + town.st : ''), miles))}">Map ↗</a><button class="btn-sm" data-del="${x.id}">Delete</button></div></div>`).join('') : '<p class="hint">Save places worth remembering, e.g. “Joe’s Diner, opens 4:30am”.</p>'}
+        <form id="nf"><label class="field"><span class="lbl">Place</span><input type="text" id="nname" maxlength="80" placeholder="Joe’s Diner"></label>
+          <label class="field"><span class="lbl">Note</span><input type="text" id="nnote" maxlength="300" placeholder="Opens 4:30am, big portions"></label>
+          <label class="field"><span class="lbl">Type</span><select id="ncat"><option value="">—</option>${SECTIONS.map((s) => `<optgroup label="${esc(s.title)}">${s.items.map((i) => `<option value="${i.id}">${esc(i.label)}</option>`).join('')}</optgroup>`).join('')}</select></label>
+          <button class="btn primary" type="submit">Save spot</button></form>
+        ${mine.length ? `<a class="btn ghost mt" href="#/o/${o.id}/local/share">Share my spots with the crew</a>` : ''}</div>
+      ${SECTIONS.map((s) => `<h3 class="sec">${s.icon} ${esc(s.title)}</h3><div class="links">${s.items.map((i) => `<a class="lcard" data-cat="${i.id}" href="${esc(mapsSearch(p, i.q, miles))}" target="_blank" rel="noopener"><b>${i.icon} ${esc(i.label)}</b>${i.note ? `<small>${esc(i.note)}</small>` : ''}<span class="chev">↗</span></a>${yelp ? `<a class="ylink" href="${esc(yelpSearch(p, i.yelp, town))}" target="_blank" rel="noopener">${esc(i.label)} on Yelp ↗</a>` : ''}`).join('')}</div>`).join('')}
+      <p class="fine">These buttons open real Google Maps${yelp ? ' and Yelp' : ''} searches. This app lists no businesses and makes none up. Check hours before you drive.</p>`;
+    $('rad').onclick = (e) => { const b = e.target.closest('button'); if (b) { miles = +b.dataset.v; set('ot.lradius', miles); draw(); } };
+    $('src').onclick = (e) => { const b = e.target.closest('button'); if (b) { yelp = b.dataset.v === '1'; set('ot.yelp', yelp); draw(); } };
+    $('nf').onsubmit = (e) => { e.preventDefault(); try { notes.put(newNote({ name: $('nname').value, note: $('nnote').value, cat: $('ncat').value, outageId: o.id, plantId: o.plantId })); toast('Saved'); draw(); } catch { toast('Add a place name'); } };
+    view.querySelectorAll('[data-del]').forEach((b) => (b.onclick = () => { if (confirm('Delete this spot?')) { notes.remove(b.dataset.del); draw(); } }));
+  };
+  draw();
+}
+function shareNotes(o) {
+  const p = plantById[o.plantId];
+  chrome('Share my spots', { back: true, nav: 'home' });
+  const mine = notes.all().filter((x) => x.outageId === o.id);
+  const url = notesShareUrl(location.origin + location.pathname, o.plantId, mine);
+  let svg = '';
+  try { const q = qrcode(0, 'M'); q.addData(url, 'Byte'); q.make(); svg = q.createSvgTag({ cellSize: 4, margin: 4, scalable: true }); } catch { svg = '<p class="hint">Too many spots for a QR code. Use the link.</p>'; }
+  view.innerHTML = `<div class="card center"><b>⭐ ${mine.length} spot${mine.length === 1 ? '' : 's'} near ${esc(p.name)}</b><div class="qr">${svg}</div><p class="hint">Have them scan this with their phone camera. It opens this app and adds your spots.</p></div>
+    <div class="card"><label class="field"><span class="lbl">Share link</span><textarea rows="3" readonly id="url">${esc(url)}</textarea></label>
+      ${navigator.share ? '<button class="btn primary" id="ns">Share… (text / group chat)</button>' : ''}<button class="btn ghost mt" id="cp">Copy link</button>
+      <p class="hint">Your spots are packed into the link itself, so nothing gets uploaded.</p></div>`;
+  $('cp').onclick = async () => { try { await navigator.clipboard.writeText(url); toast('Link copied'); } catch { $('url').select(); document.execCommand('copy'); toast('Link copied'); } };
+  if ($('ns')) $('ns').onclick = () => navigator.share({ title: 'Spots near ' + p.name, url }).catch(() => {});
+}
+function importNotes(code) {
+  chrome('Import spots', { back: true, nav: 'home' });
+  let d; try { d = decodeNotes(code); } catch { view.innerHTML = '<div class="card"><p class="hint">That link is damaged or from a newer version.</p></div>'; return; }
+  const p = plantById[d.plantId]; const mine = outages.all().filter((x) => x.plantId === d.plantId);
+  view.innerHTML = `<div class="card"><h3>Spots shared with you</h3>${d.notes.map((x) => `<div class="note"><div><b>${esc(x.name)}</b>${x.note ? `<div class="osub">${esc(x.note)}</div>` : ''}</div></div>`).join('')}
+    <p class="hint">${p ? esc(p.name) : 'Unknown plant'}</p>${p ? `<button class="btn primary" id="imp">${mine.length ? `Add to my ${esc(p.name)} outage` : `Add — and create a ${esc(p.name)} outage`}</button>` : ''}</div>`;
+  if ($('imp')) $('imp').onclick = () => {
+    let o = mine[0];
+    if (!o) { o = { id: uid(), plantId: d.plantId, start: '', end: '', units: [], company: '', notes: '', createdAt: Date.now(), updatedAt: Date.now(), ver: 1 }; outages.put(o); }
+    const others = notes.all().filter((x) => x.outageId !== o.id);
+    notes.save([...others, ...mergeNotes(notes.all().filter((x) => x.outageId === o.id), d.notes.map((x) => ({ ...x, outageId: o.id })))]);
+    toast('Spots added'); location.replace(`#/o/${o.id}/local`);
+  };
+}
 // ---------- router ----------
 function render() {
   const h = location.hash.replace(/^#\/?/, '');
@@ -405,6 +467,7 @@ function render() {
   if (parts[0] === 'upcoming') return upcomingView();
   if (parts[0] === 'about') return about();
   if (parts[0] === 'import' && q.p) return importView(q.p);
+  if (parts[0] === 'import' && q.n) return importNotes(q.n);
   if (parts[0] === 'o') {
     const o = outages.get(parts[1]);
     if (!o || !plantById[o.plantId]) { location.replace('#/'); return; }
@@ -414,6 +477,7 @@ function render() {
     if (sub === 'housing') return housing(o);
     if (sub === 'pay') return pay(o);
     if (sub === 'board') return board(o);
+    if (sub === 'local') return parts[3] === 'share' ? shareNotes(o) : localView(o);
     if (sub === 'post') {
       if (parts[3] === 'new') return postForm(o, null, q.k);
       const x = posts.get(parts[3]); if (!x) return board(o);

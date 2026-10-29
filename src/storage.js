@@ -17,3 +17,4 @@ function collection(key) {
 }
 export const outages = collection('ot.outages');
 export const posts = collection('ot.posts');
+export const notes = collection('ot.notes');

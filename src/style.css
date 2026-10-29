@@ -339,3 +339,9 @@ h3 small { font-size: 14px; color: var(--accent); }
 .seg button { min-height: 48px; }
 .post .actions, .up .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .post .actions .btn-sm, .up .actions .btn-sm { width: 100%; min-height: 48px; font-size: 15px; }
+.tile.wide { grid-column: 1 / -1; }
+h3.sec { margin: 18px 4px 8px; }
+.ylink { display: block; padding: 10px 14px; margin: -4px 0 6px; color: var(--accent); font-size: 14px; min-height: 44px; }
+.note { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+.note .actions { flex-shrink: 0; }
+select { width: 100%; min-height: 48px; font-size: 16px; color: var(--text); background: var(--surface2); border: 2px solid var(--line); border-radius: 12px; padding: 0 10px; }
