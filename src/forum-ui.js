@@ -8,7 +8,7 @@ export function makeForum({ view, chrome, toast, esc, plantById, $ }) {
   const boardName = (b) => (b === OVERALL ? 'Overall' : plantById[b]?.name || b);
   const lastPlant = () => get('ot.forum.plant', null);
   const loading = () => { view.innerHTML = '<div class="card"><p class="hint">Loading forum…</p></div>'; };
-  const fail = (e) => { view.innerHTML = `<div class="card"><h3>Couldn’t reach the forum</h3><p class="hint">${esc(e.message || e)}</p><p class="hint">Check your signal and try again.</p><button class="btn ghost" id="retry">Try again</button></div>`; $('retry').onclick = () => window.dispatchEvent(new HashChangeEvent('hashchange')); };
+  const fail = (e) => { const m = String(e?.message || e); if (/anonymous|schema cache|does not exist|PGRST|relation/i.test(m)) { view.innerHTML = `<div class="card empty"><h2>Forum is coming soon</h2><p class="hint">The forum is being set up. Check back shortly.</p></div>`; return; } view.innerHTML = `<div class="card"><h3>Couldn’t reach the forum</h3><p class="hint">${esc(e.message || e)}</p><p class="hint">Check your signal and try again.</p><button class="btn ghost" id="retry">Try again</button></div>`; $('retry').onclick = () => window.dispatchEvent(new HashChangeEvent('hashchange')); };
   async function api() { const a = await forumApi(); if (a && !me) me = await a.init(); return a; }
   const guide = (open = false) => `<details class="card guide"${open ? ' open' : ''}><summary>📋 Posting guidelines</summary><ul>${GUIDELINES.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>
     <p class="hint">Posts reported by ${HIDE_AFTER} people are hidden until reviewed.</p></details>`;
