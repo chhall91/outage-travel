@@ -79,6 +79,11 @@ export function supabaseApi(createClient, url, key) {
       if (error && error.code !== '23505') throw new Error(error.message);
       return { ok: true, already: !!error };
     },
+    async suggest(x) {
+      if (!uid) await this.init().catch(async () => { const { data: { session } } = await sb.auth.getSession(); if (!session) throw new Error('no session'); uid = session.user.id; });
+      ok(await sb.from('suggestions').insert({ body: String(x.body).trim(), category: x.category || null, plant_id: x.plantId || null }));
+      return { ok: true };
+    },
   };
 }
 

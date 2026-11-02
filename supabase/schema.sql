@@ -166,3 +166,19 @@ drop policy if exists rep_ins on public.forum_reports;
 create policy rep_ins on public.forum_reports for insert to authenticated with check (reporter_id = auth.uid());
 
 -- Moderation: in Table Editor, set hidden = false to restore a post, or hidden = true to pull one.
+
+-- ---------- suggestions: "Suggest a change" (insert-only; only you read them in the dashboard) ----------
+create table if not exists public.suggestions (
+  id uuid primary key default gen_random_uuid(),
+  body text not null check (char_length(btrim(body)) between 3 and 2000),
+  category text check (category is null or category in ('feature','change','bug','data','other')),
+  plant_id text check (plant_id is null or plant_id ~ '^[a-z0-9-]{2,60}$'),
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+revoke all on public.suggestions from anon, authenticated;
+grant insert (body, category, plant_id) on public.suggestions to authenticated;
+alter table public.suggestions enable row level security;
+drop policy if exists s_ins on public.suggestions;
+create policy s_ins on public.suggestions for insert to authenticated with check (user_id = auth.uid());
+-- No select policy: users can't read suggestions. View them in Table Editor → suggestions.

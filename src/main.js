@@ -14,6 +14,7 @@ import { KINDS, newPost, editPost, claimPost, reopenPost, mergePost, shareUrl, d
 import { NRC_STATUS_URL, NRC_STATUS_PAGE, parseStatus, unitState } from './lib/status.js';
 import qrcode from 'qrcode-generator';
 import { makeForum } from './forum-ui.js';
+import { forumApi, forumMode } from './lib/forum-api.js';
 
 const VERSION = '0.1.0';
 const BASE = import.meta.env.BASE_URL;
@@ -96,6 +97,7 @@ function home() {
       : `<div class="card empty"><div class="big">${ico("plant","ico xl")}</div><h2>Where’s your next outage?</h2><p class="hint">Add it once — housing, per diem & pay, and the crew board all open from it.</p></div>`}
     <a class="btn primary" href="#/add">${ico("plus")} Add an outage</a>
     <a class="ocard mt" href="#/forum" id="home-forum"><div class="ohead"><b class="ih">${ico("forum")} Forum</b>${forum.enabled ? '' : '<span class="pill">Coming soon</span>'}</div><div class="osub">Plant boards + overall: housing, food, rides, work & pay</div><span class="chev">›</span></a>
+    <a class="ocard mt" href="#/suggest" id="home-suggest"><div class="ohead"><b class="ih">${ico("plus")} Suggest a change</b></div><div class="osub">Tell us what to add or fix in the app</div><span class="chev">›</span></a>
     <div class="card mt"><h3><span class="ih"><i class="sdot bad"></i>Offline</span> <small>${offline.length} units</small></h3>
       ${offline.length ? offline.map(({ p, u }) => `<a class="row-link" href="#/plant/${p.id}">${unitRow(u)}</a>`).join('') : '<p class="hint">None offline in the latest report.</p>'}
       ${statusLine()}
@@ -459,7 +461,8 @@ function downView() {
 }
 function about() {
   chrome('About & sources', { nav: 'about' });
-  view.innerHTML = `<div class="card"><h3>Data sources</h3>
+  view.innerHTML = `<a class="ocard" href="#/suggest" id="about-suggest"><div class="ohead"><b class="ih">${ico("plus")} Suggest a change</b></div><div class="osub">Something you’d like added or changed?</div><span class="chev">›</span></a>
+    <div class="card mt"><h3>Data sources</h3>
     <p><b>Plants:</b> <a href="https://www.nrc.gov/reactors/operating/list-power-reactor-units.html" target="_blank" rel="noopener">NRC List of Power Reactor Units</a> (names, units, type, location, owner/operator, region). The coordinates, county, and capacity come from the <a href="https://atlas.eia.gov/" target="_blank" rel="noopener">EIA Power Plants layer</a>. Palisades isn’t in EIA’s nuclear layer, so its coordinates are approximate.</p>
     <p><b>Per diem:</b> GSA FY${perdiem.fy} CONUS rates (${esc(perdiem.effective)}), from the file <i>${esc(perdiem.file)}</i> on <a href="https://www.gsa.gov/travel/plan-a-trip/per-diem-rates/per-diem-files" target="_blank" rel="noopener">gsa.gov</a>. It works offline. The standard rate is ${money(perdiem.standard.lodging)} + ${money(perdiem.standard.mie)}.</p>
     <p><b>Unit status:</b> <a href="${NRC_STATUS_PAGE}" target="_blank" rel="noopener">NRC Power Reactor Status Report</a> (daily % power, last 365 days). nrc.gov doesn’t allow browser apps to read it directly, so a GitHub Action fetches it every day and publishes a snapshot with this app. The last report you loaded stays saved for offline use.</p>
@@ -530,6 +533,32 @@ function importNotes(code) {
   };
 }
 const forum = makeForum({ view, chrome, toast, esc, plantById, $ });
+function suggestView(q) {
+  chrome('Suggest a change', { back: true, nav: 'about' });
+  const cats = [['feature', 'New feature'], ['change', 'Change something'], ['bug', 'Something’s broken'], ['data', 'Wrong plant or outage info'], ['other', 'Other']];
+  const pid = plantById[q.plant] ? q.plant : '';
+  view.innerHTML = `<div class="card"><p class="hint">What would make Outage Travel better for you and your crew? Please don’t include security details, plant layouts, or anyone’s name.</p>
+    <label class="field"><span class="lbl">Type (optional)</span><select id="sg-cat"><option value="">Choose…</option>${cats.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select></label>
+    <label class="field"><span class="lbl">Plant (optional)</span><select id="sg-plant"><option value="">None / whole app</option>${plants.map((p) => `<option value="${p.id}" ${p.id === pid ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>
+    <label class="field"><span class="lbl">Your suggestion</span><textarea id="sg-body" rows="5" maxlength="2000" placeholder="I’d like to see…"></textarea></label>
+    <button class="btn primary" id="sg-send">Send suggestion</button><div id="sg-msg" class="mt"></div></div>`;
+  const msg = (h) => { $('sg-msg').innerHTML = h; };
+  $('sg-send').onclick = async () => {
+    const body = $('sg-body').value.trim();
+    if (body.length < 3) return msg('<p class="hint">Please write a few words first.</p>');
+    $('sg-send').disabled = true;
+    const soon = '<div class="spot"><b>Suggestions are coming soon.</b> Sending isn’t available right now. Please try again later.</div>';
+    try {
+      const api = forumMode === 'supabase' ? await forumApi() : null;
+      if (!api || !api.suggest) { msg(soon); $('sg-send').disabled = false; return; }
+      await api.suggest({ body, category: $('sg-cat').value, plantId: $('sg-plant').value });
+      $('sg-body').value = '';
+      msg('<div class="spot" id="sg-ok"><b>Thanks!</b> Your suggestion was sent.</div>');
+    } catch (e) { console.warn('suggest failed', e); msg(soon); }
+    $('sg-send').disabled = false;
+  };
+}
+
 // ---------- router ----------
 function render() {
   const h = location.hash.replace(/^#\/?/, '');
@@ -549,6 +578,7 @@ function render() {
   if (parts[0] === 'upcoming') return upcomingView();
   if (parts[0] === 'down') return downView();
   if (parts[0] === 'about') return about();
+  if (parts[0] === 'suggest') return suggestView(q);
   if (parts[0] === 'import' && q.p) return importView(q.p);
   if (parts[0] === 'import' && q.r) return importRating(q.r);
   if (parts[0] === 'import' && q.n) return importNotes(q.n);
